@@ -1,0 +1,545 @@
+{
+    "rem": "",
+    "date": "2016.04.07",
+    "ver": "B",
+    "nodeSuper": {
+        "80": {
+            "name": "Operation status"
+        },
+        "82": {
+            "name": "Version information"
+        },
+        "name": "Node profile super class",
+        "d5": {
+            "name": "Instance list notification"
+        },
+        "d6": {
+            "name": "Self-node instance list S"
+        }
+    },
+    "devSuper": {
+        "80": {
+            "name": "Operation status"
+        },
+        "name": "Device object super class",
+        "9d": {
+            "name": "Status change announcement property map"
+        },
+        "9e": {
+            "name": "Set property map"
+        },
+        "9f": {
+            "name": "Get property map"
+        }
+    },
+    "0001": {
+        "name": "Gas leak sensor"
+    },
+    "0002": {
+        "name": "Crime prevention sensor"
+    },
+    "0003": {
+        "name": "Emergency button"
+    },
+    "0004": {
+        "name": "First-aid sensor"
+    },
+    "0005": {
+        "name": "Earthquake sensor"
+    },
+    "0006": {
+        "name": "Electric leak sensor"
+    },
+    "0007": {
+        "name": "Human detection sensor"
+    },
+    "0008": {
+        "name": "Visitor sensor"
+    },
+    "0009": {
+        "name": "Call sensor"
+    },
+    "000a": {
+        "name": "Condensation sensor"
+    },
+    "000b": {
+        "name": "Air pollution sensor"
+    },
+    "000c": {
+        "name": "Oxygen sensor"
+    },
+    "000d": {
+        "name": "Illuminance sensor"
+    },
+    "000e": {
+        "name": "Sound sensor"
+    },
+    "000f": {
+        "name": "Mailing sensor"
+    },
+    "0010": {
+        "name": "Weight sensor"
+    },
+    "0011": {
+        "name": "Temperature sensor"
+    },
+    "0012": {
+        "name": "Humidity sensor"
+    },
+    "0013": {
+        "name": "Rain sensor"
+    },
+    "0014": {
+        "name": "Water level sensor"
+    },
+    "0015": {
+        "name": "Bath water level sensor"
+    },
+    "0016": {
+        "name": "Bath heating status sensor"
+    },
+    "0017": {
+        "name": "Water leak sensor"
+    },
+    "0018": {
+        "name": "Water overflow sensor"
+    },
+    "0019": {
+        "name": "Fire sensor"
+    },
+    "001a": {
+        "name": "Cigarette smoke sensor"
+    },
+    "001b": {
+        "name": "CO2 sensor"
+    },
+    "001c": {
+        "name": "Gas sensor"
+    },
+    "001d": {
+        "name": "VOC sensor"
+    },
+    "001e": {
+        "name": "Differential pressure sensor"
+    },
+    "001f": {
+        "name": "Air speed sensor"
+    },
+    "0020": {
+        "name": "Odor sensor"
+    },
+    "0021": {
+        "name": "Flame sensor"
+    },
+    "0022": {
+        "name": "Electric energy sensor"
+    },
+    "0023": {
+        "name": "Current value sensor"
+    },
+    "0024": {
+        "name": "Daylight sensor"
+    },
+    "0025": {
+        "name": "Water flow rate sensor"
+    },
+    "0026": {
+        "name": "Micromotion sensor"
+    },
+    "0027": {
+        "name": "Passage sensor"
+    },
+    "0028": {
+        "name": "Bed presence sensor"
+    },
+    "0029": {
+        "name": "Open/close sensor"
+    },
+    "002a": {
+        "name": "Activity amount sensor"
+    },
+    "002b": {
+        "name": "Human body location sensor"
+    },
+    "002c": {
+        "name": "Snow sensor"
+    },
+    "0130": {
+        "name": "Home air conditioner"
+    },
+    "0131": {
+        "name": "Cold blaster"
+    },
+    "0132": {
+        "name": "Electric fan"
+    },
+    "0133": {
+        "name": "Ventilation fan"
+    },
+    "0134": {
+        "name": "Air conditioner ventilation fan"
+    },
+    "0135": {
+        "name": "Air cleaner",
+        "c0": {
+            "name": "Air pollution detection status"
+        }
+    },
+    "0136": {
+        "name": "Cold blast fan"
+    },
+    "0137": {
+        "name": "Circulator"
+    },
+    "0138": {
+        "name": "Dehumidifier"
+    },
+    "0139": {
+        "name": "Humidifier"
+    },
+    "013a": {
+        "name": "Ceiling fan"
+    },
+    "013b": {
+        "name": "Electric Kotatsu"
+    },
+    "013c": {
+        "name": "Electric heating pad"
+    },
+    "013d": {
+        "name": "Electric blanket"
+    },
+    "013e": {
+        "name": "Space heater"
+    },
+    "013f": {
+        "name": "Panel heater"
+    },
+    "0140": {
+        "name": "Electric carpet"
+    },
+    "0141": {
+        "name": "Floor heater"
+    },
+    "0142": {
+        "name": "Electric heater"
+    },
+    "0143": {
+        "name": "Fan heater"
+    },
+    "0144": {
+        "name": "Battery charger"
+    },
+    "0145": {
+        "name": "Package-type commercial air conditioner (indoor unit)"
+    },
+    "0146": {
+        "name": "Package-type commercial air conditioner (outdoor unit)"
+    },
+    "0147": {
+        "name": "Package-type commercial air conditioner thermal storage unit"
+    },
+    "0148": {
+        "name": "Commercial fan coil unit"
+    },
+    "0149": {
+        "name": "Commercial air conditioning cold source (chiller)"
+    },
+    "0150": {
+        "name": "Commercial air conditioning hot source (boiler)"
+    },
+    "0151": {
+        "name": "Air-conditioning VAV for commercial applications"
+    },
+    "0152": {
+        "name": "Air handling unit (air-conditioning) for commercial applications"
+    },
+    "0153": {
+        "name": "Unit-cooler"
+    },
+    "0154": {
+        "name": "Condensing unit for commercial applications"
+    },
+    "0260": {
+        "name": "Electrically operated shade"
+    },
+    "0261": {
+        "name": "Electrically operated shutter"
+    },
+    "0262": {
+        "name": "Electrically operated curtain"
+    },
+    "0263": {
+        "name": "Electrically operated storm window"
+    },
+    "0264": {
+        "name": "Electrically operated door"
+    },
+    "0265": {
+        "name": "Electrically operated skylight"
+    },
+    "0266": {
+        "name": "Awning"
+    },
+    "0267": {
+        "name": "Garden sprinkler"
+    },
+    "0268": {
+        "name": "Fire sprinkler"
+    },
+    "0269": {
+        "name": "Fountain"
+    },
+    "026a": {
+        "name": "Instantaneous water heater"
+    },
+    "026b": {
+        "name": "Electric water heater"
+    },
+    "026c": {
+        "name": "Solar water heater"
+    },
+    "026d": {
+        "name": "Circulation pump"
+    },
+    "026e": {
+        "name": "Bidet-equipped toilet(with electrically warmed seat)"
+    },
+    "026f": {
+        "name": "Electric key"
+    },
+    "0270": {
+        "name": "Gas line valve"
+    },
+    "0271": {
+        "name": "Home sauna"
+    },
+    "0272": {
+        "name": "Hot water generator"
+    },
+    "0273": {
+        "name": "Bathroom dryer"
+    },
+    "0274": {
+        "name": "Home elevator"
+    },
+    "0275": {
+        "name": "Electrically operated room divider"
+    },
+    "0276": {
+        "name": "Horizontal transfer"
+    },
+    "0277": {
+        "name": "Electrically operated clothes-drying pole"
+    },
+    "0278": {
+        "name": "Septic tank"
+    },
+    "0279": {
+        "name": "Home solar power generation"
+    },
+    "027a": {
+        "name": "Cold / hot water heat source equipment"
+    },
+    "027b": {
+        "name": "Floor heater"
+    },
+    "027c": {
+        "name": "Fuel cell"
+    },
+    "027d": {
+        "name": "Storage battery"
+    },
+    "027e": {
+        "name": "Electric vehicle"
+    },
+    "027f": {
+        "name": "Engine cogeneration"
+    },
+    "0280": {
+        "name": "Electric energy meter"
+    },
+    "0281": {
+        "name": "Water flow meter"
+    },
+    "0282": {
+        "name": "Gas meter"
+    },
+    "0283": {
+        "name": "LP gas meter"
+    },
+    "0284": {
+        "name": "Clock"
+    },
+    "0285": {
+        "name": "Automatic door"
+    },
+    "0286": {
+        "name": "Commercial elevator"
+    },
+    "0287": {
+        "name": "Distribution panel metering"
+    },
+    "0288": {
+        "name": "Smart electric energy meter"
+    },
+    "0289": {
+        "name": "Smart gas meter"
+    },
+    "0290": {
+        "name": "General lighting class"
+    },
+    "0299": {
+        "name": "Emergency lighting"
+    },
+    "029d": {
+        "name": "Equipment light"
+    },
+    "02a0": {
+        "name": "Buzzer"
+    },
+    "03b0": {
+        "name": "Coffee machine"
+    },
+    "03b1": {
+        "name": "Coffee mill"
+    },
+    "03b2": {
+        "name": "Electric hot water pot(electric thermos)"
+    },
+    "03b3": {
+        "name": "Electric stove"
+    },
+    "03b4": {
+        "name": "Toaster"
+    },
+    "03b5": {
+        "name": "Juicer, food mixer"
+    },
+    "03b6": {
+        "name": "Food processor"
+    },
+    "03b7": {
+        "name": "Refrigerator"
+    },
+    "03b8": {
+        "name": "Combination microwave oven(Electronic oven)"
+    },
+    "03b9": {
+        "name": "Cooking heater"
+    },
+    "03ba": {
+        "name": "Oven"
+    },
+    "03bb": {
+        "name": "Rice cooker"
+    },
+    "03bc": {
+        "name": "Electronic jar"
+    },
+    "03bd": {
+        "name": "Dish washer"
+    },
+    "03be": {
+        "name": "Dish dryer"
+    },
+    "03bf": {
+        "name": "Electric rice card cooker"
+    },
+    "03c0": {
+        "name": "Keep-warm machine"
+    },
+    "03c1": {
+        "name": "Rice mill"
+    },
+    "03c2": {
+        "name": "Automatic bread cooker"
+    },
+    "03c3": {
+        "name": "Slow cooker"
+    },
+    "03c4": {
+        "name": "Electric pickles cooker"
+    },
+    "03c5": {
+        "name": "Washing machine"
+    },
+    "03c6": {
+        "name": "Clothes dryer"
+    },
+    "03c7": {
+        "name": "Electric iron"
+    },
+    "03c8": {
+        "name": "Trouser press"
+    },
+    "03c9": {
+        "name": "Futon dryer"
+    },
+    "03ca": {
+        "name": "Small article, shoes dryer"
+    },
+    "03cb": {
+        "name": "Electric vacuum cleaner (including central vacuum cleaner)"
+    },
+    "03cc": {
+        "name": "Disposer"
+    },
+    "03cd": {
+        "name": "Electric mosquito catcher"
+    },
+    "03ce": {
+        "name": "Commercial show case"
+    },
+    "03cf": {
+        "name": "Commercial refrigerator"
+    },
+    "03d0": {
+        "name": "Commercial hot case"
+    },
+    "03d1": {
+        "name": "Commercial fryer"
+    },
+    "03d2": {
+        "name": "Commercial microwave oven"
+    },
+    "03d3": {
+        "name": "Washer and dryer"
+    },
+    "0401": {
+        "name": "Weighing machine"
+    },
+    "0402": {
+        "name": "Clinical thermometer"
+    },
+    "0403": {
+        "name": "Blood pressure meter"
+    },
+    "0404": {
+        "name": "Blood sugar meter"
+    },
+    "0405": {
+        "name": "Body fat meter"
+    },
+    "05fc": {
+        "name": "Secure communication shared key setup node"
+    },
+    "05fd": {
+        "name": "Switch (supporting JEM-A / HA terminals)"
+    },
+    "05fe": {
+        "name": "Portable (mobile) terminal."
+    },
+    "05ff": {
+        "name": "Controller"
+    },
+    "0601": {
+        "name": "Display"
+    },
+    "0602": {
+        "name": "Television"
+    },
+    "0ef0": {
+        "name": "Node profile"
+    }
+}
