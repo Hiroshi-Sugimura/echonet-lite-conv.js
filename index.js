@@ -9,54 +9,21 @@ const fs = require('fs');
 
 // クラス変数
 var ELconv = {
-m_dict: {}
+  m_dict: {}
 };
 
 
 // 辞書の読み込み
 ELconv.initialize = function () {
-	ELconv.m_dict = JSON.parse( fs.readFileSync('./node_modules/echonet-lite-conv/dictionary_c.json', 'utf8') );
+	ELconv.m_dictNod = JSON.parse( fs.readFileSync('./node_modules/echonet-lite-conv/nodeProfile.json', 'utf8') );
+	ELconv.m_dictSup = JSON.parse( fs.readFileSync('./node_modules/echonet-lite-conv/superClass.json', 'utf8') );
+	ELconv.m_dictDev = JSON.parse( fs.readFileSync('./node_modules/echonet-lite-conv/deviceObject_G.json', 'utf8') );
 };
 
 
 //////////////////////////////////////////////////////////////////////
 // 変換系/内部関数
 //////////////////////////////////////////////////////////////////////
-// 1バイト文字をHEX数値にしたい，基本機能であるかもしれない．
-ELconv.charToInteger = function( chara ) {
-	var ret = 0;
-	switch (chara) {
-	case "0": case "1": case "2": case "3": case "4": case "5": case "6": case "7": case "8": case "9":
-		ret = parseInt(chara);
-		break;
-	case "a": case "A":
-		ret = 10;
-		break;
-
-	case "b": case "B":
-		ret = 11;
-		break;
-
-	case "c": case "C":
-		ret = 12;
-		break;
-
-	case "d": case "D":
-		ret = 13;
-		break;
-
-	case "e": case "E":
-		ret = 14;
-		break;
-
-	case "f": case "F":
-		ret = 15;
-		break;
-
-	default : ret = 0; break;
-	}
-	return ret;
-}
 
 // 1バイトを文字列の16進表現へ（1Byteは必ず2文字にする）
 ELconv.toHexString = function( byte ) {
@@ -74,7 +41,7 @@ ELconv.toHexArray = function( string ) {
 		l = string.substr( i, 1 );
 		r = string.substr( i+1, 1 );
 
-		ret.push( (ELconv.charToInteger(l) * 16) + ELconv.charToInteger(r) );
+		ret.push( (parseInt(l, 16) * 16) + parseInt(r, 16) );
 	}
 
 	return ret;
@@ -83,9 +50,12 @@ ELconv.toHexArray = function( string ) {
 
 // EOJを文字列へ
 ELconv.refEOJ = function(eoj) {
-	var ret = eoj;
-	if( eoj.substr(0, 4) in ELconv.m_dict ) {
-		ret = ELconv.m_dict[eoj.substr(0, 4)].name + eoj.substr(4,2);
+	var ret = eoj = eoj.toUpperCase();
+	if( eoj.substr(0,4) == '0EF0' ) {
+		ret = ELconv.m_dictNod.elObjects["0x0EF0"].objectName + eoj.substr(4,2)  + "(" + eoj + ")";
+	}
+	if( ELconv.m_dictDev.elObjects["0x"+eoj.substr(0,4)] ) {
+		ret = ELconv.m_dictDev.elObjects["0x"+eoj.substr(0,4)].objectName + eoj.substr(4,2)  + "(" + eoj + ")";
 	}
 	return ret;
 };
@@ -94,28 +64,29 @@ ELconv.refEOJ = function(eoj) {
 ELconv.refEPC = function(eoj, epc) {
 	// console.log( "------------------------------" );
 	// console.log( "refEPC: " + eoj + ":" + epc );
-	var ret = epc;
+	eoj = eoj.toUpperCase();
+	var ret = epc = epc.toUpperCase();
 
+	// スーパークラスにあるか？
+	if( undefined != ELconv.m_dictSup.elObjects["0x0000"].epcs["0x"+epc] ) { // 指定のEPCはあるか？あればまず確保，機器固有があれば上書き
+		ret = ELconv.m_dictSup.elObjects["0x0000"].epcs["0x"+epc].epcName  + "(" + epc + ")";
+	}
 
-	if( eoj.substr(0, 4) == '0ef0' ) {  // node profile object
-		if( epc in ELconv.m_dict["nodeSuper"] ) { // 指定のEPCはあるか？あればまず確保，機器固有があれば上書き
-			ret = ELconv.m_dict["nodeSuper"][epc].name;
-		}
-	} else {  // device object
-		// スーパークラスにあるか？
-		if( epc in ELconv.m_dict["devSuper"] ) { // 指定のEPCはあるか？あればまず確保，機器固有があれば上書き
-			ret = ELconv.m_dict["devSuper"][epc].name;
+	if( eoj.substr(0, 4) == '0EF0' ) {  // node profile object
+		var devProps = ELconv.m_dictNod.elObjects["0x"+eoj.substr(0, 4)];
+		if( "0x"+epc in devProps.epcs ) { // 指定のEPCはあるか？
+			ret = devProps.epcs["0x"+epc].epcName  + "(" + epc + ")";
 		}
 	}
 
 	// 各機器固有のEPCか？
-	if( eoj.substr(0, 4) in ELconv.m_dict ) {  // 指定のEOJはあるか？
-		var devProps = ELconv.m_dict[eoj.substr(0, 4)];
-		if( epc in devProps ) { // 指定のEPCはあるか？
-			ret = devProps[epc].name;
+	if( ELconv.m_dictDev.elObjects["0x"+eoj.substr(0, 4)] ) {  // 指定のEOJはあるか？
+		var devProps = ELconv.m_dictDev.elObjects["0x"+eoj.substr(0, 4)];
+		if( "0x"+epc in devProps.epcs ) { // 指定のEPCはあるか？
+			ret = devProps.epcs["0x"+epc].epcName  + "(" + epc + ")";
 		}
 	}
-	return ret;
+	return (ret);
 };
 
 
@@ -131,12 +102,10 @@ ELconv.refer = function( facilities, callback ) {
 	Object.keys( facilities ).forEach( function (ip) { // ip
 		ret.IPs.push(ip);
 		ret[ip] = {"EOJs": []}
-
 		Object.keys( facilities[ip] ).forEach( function (eoj) { // eoj
 			retEoj = ELconv.refEOJ(eoj);
 			ret[ip].EOJs.push( retEoj );
 			ret[ip][retEoj] = { 'EPCs': [] };
-
 			Object.keys( facilities[ip][eoj] ).forEach( function (epc) { // epc
 				retEpc = ELconv.refEPC(eoj, epc);
 				ret[ip][retEoj].EPCs.push(retEpc);
