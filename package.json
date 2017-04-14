@@ -1,6 +1,6 @@
 {
   "name": "echonet-lite-conv",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "This module provides converter for ECHONET Lite protocol API.",
   "main": "index.js",
   "scripts": {
