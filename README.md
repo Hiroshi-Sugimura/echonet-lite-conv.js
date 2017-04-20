@@ -15,89 +15,96 @@ The module to process ECHONET Lite protocol is [here](https://www.npmjs.com/pack
 
 ## Demos
 
+
 * An example of a script
 
-    // EL最小構成, minimum sample
-    // ECHONET Liteのコンバーターを準備しておいて
-    var ELconv = require('echonet-lite-conv');
 
-    // コンバータを初期化しておく（JSON形式の定義データを読む）
-    ELconv.initialize();
+	//==================================
+	// EL最小構成, minimum sample
+	// ECHONET Liteのコンバーターを準備しておいて
+	var ELconv = require('echonet-lite-conv');
+	//==================================
+	// コンバータを初期化しておく（JSON形式の定義データを読む）
+	ELconv.initialize();
+	//==================================
+	// require('echonet-lite') で利用される EL.facilities の受信データがこんな感じで管理されるので
+	var facilities =
+	{ '192.168.2.104':
+	   { '05ff01': { '80': '30', d6: '' },
+	     '0ef001': { d6: '0105ff01' } },
+	  '192.168.2.127': { '0ef001': { '80': '30', d6: '0105fe01' } },
+	  '192.168.2.148': { '05ff01': { d6: '' } },
+	  '192.168.2.159':
+	   { '029001': { '80': '31', d5: '01029001' },
+	     '0ef001': { '80': '30' } },
+	  '192.168.2.115':
+	   { '013501':
+	      { '80': '31',
+	        f2: '400000000000000000000000000000000000020000ff0000ffff3100',
+	        c0: '42',
+	        '01': '' } },
+	    '192.168.2.103': { '05ff01': { '80': '', d6: '' } } };
+	//==================================
+	// こんな感じでテキスト参照に変換できる
+	ELconv.refer( facilities, function( devs ) {
+	    console.dir(devs);
+	});
 
-    // require('echonet-lite') で利用される EL.facilities の受信データがこんな感じで管理されるので
-    var facilities =
-    { '192.168.2.104':
-       { '05ff01': { '80': '30', d6: '' },
-         '0ef001': { d6: '0105ff01' } },
-      '192.168.2.127': { '0ef001': { '80': '30', d6: '0105fe01' } },
-      '192.168.2.148': { '05ff01': { d6: '' } },
-      '192.168.2.159':
-       { '029001': { '80': '31', d5: '01029001' },
-         '0ef001': { '80': '30' } },
-      '192.168.2.115':
-       { '013501':
-          { '80': '31',
-            f2: '400000000000000000000000000000000000020000ff0000ffff3100',
-            c0: '42',
-            '01': '' } },
-    	'192.168.2.103': { '05ff01': { '80': '', d6: '' } } };
-
-    // こんな感じでテキスト参照に変換できる
-    ELconv.refer( facilities, function( devs ) {
-    	console.dir(devs);
-    });
 
 
 * output
 
-    { IPs:
-        [ '192.168.2.104',
-          '192.168.2.127',
-          '192.168.2.148',
-          '192.168.2.159',
-          '192.168.2.115',
-          '192.168.2.103' ],
 
-        '192.168.2.104':
-        { EOJs: [ 'Controller01', 'Node profile01' ],
-        Controller01:
-            { EPCs: [Object],
-                'Operation status': '30',
-                'Self-node instance list S': '' },
-            'Node profile01': { EPCs: [Object], d6: '0105ff01' } },
+	{ IPs:
+	   [ '192.168.0.35', ...],
+	  '192.168.0.35':
+	   { EOJs: [ 'ノードプロファイル01(0ef001)', 'コントローラ01(05ff01)' ],
+	     'ノードプロファイル01(0ef001)':
+	      { EPCs:
+	         [ '動作状態(80)',
+	           'Version情報(82)',
+	           '識別番号(83)',
+	           'インスタンスリスト通知(D5)',
+	           '自ノードインスタンスリストS(D6)',
+	           '状変アナウンスプロパティマップ(9D)',
+	           'Setプロパティマップ(9E)',
+	           'Getプロパティマップ(9F)',
+	           'メーカコード(8A)',
+	           '自ノードインスタンス数(D3)',
+	           '自ノードクラス数(D4)',
+	           '自ノードクラスリストS(D7)' ],
+	        '動作状態(80)': 'ON(30)',
+	        'Version情報(82)': 'referSpec(010A0100)',
+	        '識別番号(83)': 'referSpec(FE00000000000000000000000000000000)',
+	        'インスタンスリスト通知(D5)': 'keyValues(0105FF01)',
+	        '自ノードインスタンスリストS(D6)': 'コントローラ01(0105FF01)',
+	        '状変アナウンスプロパティマップ(9D)': 'referSpec(0280D5)',
+	        'Setプロパティマップ(9E)': 'referSpec(00)',
+	        'Getプロパティマップ(9F)': 'referSpec(098082838AD3D4D5D6D7)',
+	        'メーカコード(8A)': 'referSpec(000077)',
+	        '自ノードインスタンス数(D3)': '1(000001)',
+	        '自ノードクラス数(D4)': '2(0002)',
+	        '自ノードクラスリストS(D7)': 'コントローラ(0105FF)' },
+	     'コントローラ01(05ff01)': { EPCs: [ '動作状態(80)' ], '動作状態(80)': 'ON(30)' } },
+	.
+	.
+	.
 
-        '192.168.2.127':
-        { EOJs: [ 'Node profile01' ],
-            'Node profile01': { EPCs: [Object], 'Operation status': '30', d6: '0105fe01' } },
 
-        '192.168.2.148':
-        { EOJs: [ 'Controller01' ],
-        Controller01: { EPCs: [Object], 'Self-node instance list S': '' } },
 
-        '192.168.2.159':
-        { EOJs: [ 'General lighting class01', 'Node profile01' ],
-            'General lighting class01': { EPCs: [Object], 'Operation status': '31', d5: '01029001' },
-            'Node profile01': { EPCs: [Object], 'Operation status': '30' } },  // <------ 攻略情報
+## Stracture of input facilities data
 
-        '192.168.2.115':
-        { EOJs: [ 'Air cleaner01' ],
-            'Air cleaner01':
-            { EPCs: [Object],
-                'Operation status': '31',
-            f2: '400000000000000000000000000000000000020000ff0000ffff3100',
-                'Air pollution detection status': '42',
-                '01': '' } },
 
-        '192.168.2.103':
-        { EOJs: [ 'Controller01' ],
-        Controller01:
-            { EPCs: [Object],
-                'Operation status': '',
-                'Self-node instance list S': '' } } }
+	{ '192.168.2.103':
+	   { '05ff01': { '80': '', d6: '' },
+	     '0ef001': { '80': '30', d6: '0100' } },
+	  '192.168.2.104': { '0ef001': { d6: '0105ff01' }, '05ff01': { '80': '30' } },
+	  '192.168.2.115': { '0ef001': { '80': '30', d6: '01013501' } } }
 
 
 
 ## Stracture of result data
+
 
     { IPs: [ '<ip1>', '<ip2>' ],
       '<ip1>': { EPCs: [ '<epc1>', '<epc2>' ],
@@ -111,16 +118,21 @@ The module to process ECHONET Lite protocol is [here](https://www.npmjs.com/pack
     }
 
 
+
+[Here](https://www.npmjs.com/package/echonet-lite) helps you to use this stracture and to communicate the ECHONET Lite protocol.
+
+
 ## API
 
 
-* コンバータを初期化しておく（JSON形式の定義データを読む）
+* First, you must initialize this converter.
+コンバータを初期化しておく（JSON形式の定義データを読む）
 
     ELconv.initialize();
 
 
-* こんな感じでテキスト参照に変換できる
-
+* You can use this converter as following.
+こんな感じでテキスト参照に変換できる
 
     ELconv.refer( facilities, function( devs ) {
     	console.dir(devs);
@@ -146,16 +158,16 @@ For using this module, data accesing sample is following.
 
 下記ファイルが辞書になっている．
 
-Following file is dictionary for ECHONET Lite in JSON format.
+Following files are the dictionary for ECHONET Lite in JSON format.
 
-    ./node_modules/echonet-lite-conv/Appendix_G/deviceObject_G.json
-    ./node_modules/echonet-lite-conv/Appendix_G/superClass_G.json
-    ./node_modules/echonet-lite-conv/Appendix_H/deviceObject_H.json
-    ./node_modules/echonet-lite-conv/Appendix_H/superClass_H.json
-    ./node_modules/echonet-lite-conv/Appendix_I/deviceObject_I.json
-    ./node_modules/echonet-lite-conv/Appendix_I/superClass_I.json
-    ./node_modules/echonet-lite-conv/Spec_1.11/nodeProfile.json
-    ./node_modules/echonet-lite-conv/Spec_1.12/nodeProfile.json
+* ./node_modules/echonet-lite-conv/Appendix_G/deviceObject_G.json
+* ./node_modules/echonet-lite-conv/Appendix_G/superClass_G.json
+* ./node_modules/echonet-lite-conv/Appendix_H/deviceObject_H.json
+* ./node_modules/echonet-lite-conv/Appendix_H/superClass_H.json
+* ./node_modules/echonet-lite-conv/Appendix_I/deviceObject_I.json
+* ./node_modules/echonet-lite-conv/Appendix_I/superClass_I.json
+* ./node_modules/echonet-lite-conv/Spec_1.11/nodeProfile.json
+* ./node_modules/echonet-lite-conv/Spec_1.12/nodeProfile.json
 
 
 ### ECHONET Lite versions
@@ -214,15 +226,13 @@ SUGIMURA, Hiroshi
 ### 辞書データ作成とご協力
 
 
-Ver. 0.06の辞書「deviceObject_G.json」，「nodeProfile.json」，「superClass.json」は，神奈川工科大学スマートハウス研究センターの
-藤田裕之さんが作成した，ECHONET 機器オブジェクト詳細規定　Release G のJSON dataを利用しました。
+ECHONET LiteのJSONデータベースは，神奈川工科大学スマートハウス研究センターの藤田裕之さんが作成したJSON dataを利用しました．
 
-For making deviceObject_G.json, nodeProfile.json, and superClass.json on Ver. 0.0.6, I used database for ECHONET Lite objects generated by Kanagawa Institute of Technology, as following URL.
+The program uses JSON database for ECHONET Lite objects generated by Kanagawa Institute of Technology, as following URL.
 [https://github.com/KAIT-HEMS/ECHONET-APPENDIX](https://github.com/KAIT-HEMS/ECHONET-APPENDIX)
 
 
-
-Ver. 0.05の辞書「dictionary\_b.json」および「dictionary\_c.json」作成にあたり，下記の株式会社ソニーコンピュータサイエンス研究所のCSVファイルを利用いたしました．
+Ver. 0.05では，辞書「dictionary\_b.json」および「dictionary\_c.json」作成にあたり，下記の株式会社ソニーコンピュータサイエンス研究所のCSVファイルを利用いたしました．
 
 For making dictionary_b.json and dictionary_c.json on Ver. 0.0.5, It was used, that database for ECHONET Lite objects generated by Sony Computer Science Laboratories, Inc as following URL.
 
@@ -232,6 +242,10 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 
 
 ## Log
+
+0.0.9 customTypeタイプとrawData.ASCIIに対応した．対応していないデータタイプ（bitmap，rawData:ShiftJIS，others）をもう少しわかりやすく表現してみた．
+
+0.0.8 levelタイプに対応した．ただし，クッキングヒータクラスの加熱出力設定には非対応．対応していないデータタイプ（bitmap，rawData，customType，others）をもう少しわかりやすく表現してみた．
 
 0.0.7 辞書ファイルをVer 1.12のNode ProfileとRelease Iに対応した．内部的にはRelease Hも持っている．その関連で辞書の位置が変わった．EDTを少し解釈するようになった．解釈できないEDTはcontentTypeを付けることにした．EPCのF0からFFまでをユーザ定義領域と解釈結果を付けることにした．
 
@@ -246,4 +260,12 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 0.0.2 README.mdをそこそこきれいにした．攻略情報と辞書ファイルのことも追記した．
 
 0.0.1 枠組み公開した．
+
+
+## Known Issues（既知の問題）
+
+* rawData:ShiftJIS変換どうすればよいのか．
+* クッキングヒータクラスの加熱出力設定には非対応．
+* 英語に対応してない（JSON DBの英語対応待ち）．
+* 本当はRelease versionをみて，対応したバージョンの辞書を参考にしないといけないが，いまは最新データベースしか見に行っていない．
 
