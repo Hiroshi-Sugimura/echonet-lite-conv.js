@@ -243,6 +243,18 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 
 ## Log
 
+0.0.15 Version情報に対応した．すごく古いバージョンにはうまく対応できていないかもしれない．
+
+0.0.14 状変アナウンスプロパティマップ(9D), Setプロパティマップ(9E), Getプロパティマップ(9F)に対応した．
+
+0.0.13 メーカコードに対応した．
+
+0.0.12 設置場所の国土地理院場所情報コード方式は対応した．緯度経度高さ方式の16バイトの定義が不明なので誰か教えて．
+
+0.0.11 設置場所の1バイト方式に対応した．緯度経度高さ方式と国土地理院場所情報コード方式はめんどくさい．
+
+0.0.10 bitmap方式対応した．対応していないデータタイプはあと2種類（rawData:ShiftJIS，others）あるけどきびしい．よく考えるとRepeatCount対応していないかも．
+
 0.0.9 customTypeタイプとrawData.ASCIIに対応した．対応していないデータタイプ（bitmap，rawData:ShiftJIS，others）をもう少しわかりやすく表現してみた．
 
 0.0.8 levelタイプに対応した．ただし，クッキングヒータクラスの加熱出力設定には非対応．対応していないデータタイプ（bitmap，rawData，customType，others）をもう少しわかりやすく表現してみた．
@@ -264,8 +276,11 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 
 ## Known Issues（既知の問題）
 
-* rawData:ShiftJIS変換どうすればよいのか．
-* クッキングヒータクラスの加熱出力設定には非対応．
-* 英語に対応してない（JSON DBの英語対応待ち）．
 * 本当はRelease versionをみて，対応したバージョンの辞書を参考にしないといけないが，いまは最新データベースしか見に行っていない．
+* rawData:ShiftJIS変換どうすればよいのか．
+* levelタイプの，クッキングヒータクラスの加熱出力設定には非対応．
+* 英語に対応してない（JSON DBの英語対応待ち）．
+* 設置場所17バイト方式の，緯度経度高さ方式の16バイトの割り当てが不明．
+* RepeatCount非対応
+* データタイプothersはオブジェクト別対応のため，非対応
 

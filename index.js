@@ -28,6 +28,9 @@ ELconv.initialize = function () {
 	// ELconv.m_dictDev = JSON.parse( fs.readFileSync('./node_modules/echonet-lite-conv/Appendix_G/deviceObject_G.json', 'utf8') );
 	// ELconv.m_dictDev = JSON.parse( fs.readFileSync('./node_modules/echonet-lite-conv/Appendix_H/deviceObject_H.json', 'utf8') );
 	ELconv.m_dictDev = JSON.parse( fs.readFileSync('./node_modules/echonet-lite-conv/Appendix_I/deviceObject_I.json', 'utf8') );
+
+	// メーカーコード辞書
+	ELconv.m_dictMakers = JSON.parse( fs.readFileSync('./node_modules/echonet-lite-conv/makers.json', 'utf8') );
 };
 
 
@@ -42,7 +45,7 @@ ELconv.toHexString = function( byte ) {
 };
 
 
-// 16進表現の文字列を数値のバイト配列へ
+// 2進表現の文字列を数値のバイト配列へ
 ELconv.toHexArray = function( string ) {
 	var ret = [];
 	var i, l, r;
@@ -115,6 +118,18 @@ ELconv.HEXStringtoASCII = function( hexString ) {
 };
 
 
+ELconv.BITMAPtoString = function( edt, typeArray ) {
+	var ret = '';
+	var x = parseInt( edt );
+
+	for( i = 0; i < typeArray.length; i += 1 ) {
+		ret += typeArray[i].bitName + ':' + typeArray[i].bitValues[(x >> i) & 1] + ',';
+	}
+	ret = ret.slice(0, -1);
+
+	return ret;
+};
+
 
 // EOJを文字列へ
 ELconv.refEOJ = function(eoj) {
@@ -131,8 +146,6 @@ ELconv.refEOJ = function(eoj) {
 
 // EPCを文字列へ
 ELconv.refEPC = function(eoj, epc) {
-	// console.log( '------------------------------' );
-	// console.log( 'refEPC: ' + eoj + ':' + epc );
 	eoj = eoj.toUpperCase();
 	var ret = epc = epc.toUpperCase();
 
@@ -162,6 +175,242 @@ ELconv.refEPC = function(eoj, epc) {
 		}
 	}
 	return (ret);
+};
+
+
+//////////////////////////////////////////////////////////////////////
+// other(referSpec)
+//////////////////////////////////////////////////////////////////////
+
+// referSpecをEOJとEPCで振り分け
+ELconv.selectReferSpec = function( eoj, epc, edt ) {
+	var ret;
+	eoj = eoj.toUpperCase();
+	epc = epc.toUpperCase();
+	edt = edt.toUpperCase();
+
+	if( epc == '81' ) { // 設置場所
+		ret = ELconv.referSpec81( eoj, epc, edt);
+	} else if( epc == '82' ) { // Version情報
+		ret = ELconv.referSpec82( eoj, epc, edt);
+	} else if( epc == '8A' ) { // メーカコード
+		ret = ELconv.referSpec8A( eoj, epc, edt);
+	} else if( epc == '9D' || epc == '9E' || epc == '9F' ) {
+		ret = ELconv.referSpec9D9E9F( eoj, epc, edt);
+	} else {
+		ret = 'referSpec' + '(' + edt + ')';
+	}
+
+	return ret;
+};
+
+
+//------------------
+// 設置場所
+ELconv.referSpec81 = function(eoj, epc, edt) {
+	var ret;
+	eoj = eoj.toUpperCase();
+	epc = epc.toUpperCase();
+	edt = edt.toUpperCase();
+	var edtHexArray = ELconv.toHexArray( edt );
+	// 設置場所コード0x01の時は，以降に続く16バイトで緯度・経度・高さの情報とする
+	// 設置場所コード0x01の時で，上位8バイトが 00,00,1B,00,00,00,00,03の時には下位8バイトは国土地理院の場所情報コードに従う
+	// 設置場所コード0x02から0x07はfor future reserved
+
+	if( edtHexArray[0] == 0 ) {
+		ret = '位置情報未設定' + '(' + edt + ')';
+
+	}else if( edtHexArray[0] == 1 ) {
+		// 緯度・経度・高さ or 国土地理院
+		ret = '位置情報定義';
+
+		if( edt.substr( 2, 16) == '00001B0000000003' ) {
+			ret += ':国土地理院場所情報コード:';
+
+			var latitude = ((edtHexArray[9]& 0x3f)<<17) + ((edtHexArray[10] & 0xff)<<9) + ((edtHexArray[11]& 0xff)<<1) + ((edtHexArray[12] & 0x80)>>7);
+			var longitude =  ((edtHexArray[12]& 0x7f)<<17) + ((edtHexArray[13] & 0xff)<<9) + ((edtHexArray[14]& 0xff)<<1) + ((edtHexArray[15] & 0x80)>>7);
+			var floor = ((edtHexArray[15]& 0x7f)<<1) + ((edtHexArray[16]& 0x80)>>7) - 50;
+			var floor_mid = ((edtHexArray[16]& 0x40)>>6);
+			var number = (edtHexArray[16]& 0x3f);
+
+			ret += 'latitude=' + latitude + ',longitude=' + longitude + ',floor=' + floor;
+			if( floor_mid = 1 ) {
+				ret += '+mid';
+			}
+			ret += ',number=' + number;
+
+		}else{
+			ret += ':緯度・経度・高さ:';
+		}
+
+		ret += '(' + edt + ')';
+	}else if( 2 < edtHexArray[0] && edtHexArray[0] < 7 ) {
+		ret = 'for future reserved' + '(' + edt + ')';
+
+	}else if( edtHexArray[0] == 255 ) {
+		ret = '設置場所不定' + '(' + edt + ')';
+
+	}else{
+		// 1バイトの時は表を見る
+		var x = parseInt( edt, 16 );
+
+		if( x & 0x80 ) {
+			ret = 'フリー定義' + (x & 0x7f) + '(' + edt + ')';
+
+		}else{
+			var highNumber = ( (x>>3) & 0x0F );
+			var lowNumber = (x & 0x07);
+
+			switch( highNumber ) {
+			  case 1:
+				ret = '居間、リビング' + lowNumber + '(' + edt + ')';
+
+				break;
+			  case 2:
+				ret = '食堂、ダイニング' + lowNumber + '(' + edt + ')';
+				break;
+			  case 3:
+				ret = '台所、キッチン' + lowNumber + '(' + edt + ')';
+				break;
+			  case 4:
+				ret = '浴槽、バス' + lowNumber + '(' + edt + ')';
+				break;
+			  case 5:
+				ret = 'トイレ' + lowNumber + '(' + edt + ')';
+				break;
+			  case 6:
+				ret = '洗面所、脱衣所' + lowNumber + '(' + edt + ')';
+				break;
+			  case 7:
+				ret = '廊下' + lowNumber + '(' + edt + ')';
+				break;
+			  case 8:
+				ret = '部屋' + lowNumber + '(' + edt + ')';
+				break;
+			  case 9:
+				ret = '階段' + lowNumber + '(' + edt + ')';
+				break;
+			  case 10:
+				ret = '玄関' + lowNumber + '(' + edt + ')';
+				break;
+			  case 11:
+				ret = '納屋' + lowNumber + '(' + edt + ')';
+				break;
+			  case 12:
+				ret = '庭、外周' + lowNumber + '(' + edt + ')';
+				break;
+			  case 13:
+				ret = '車庫' + lowNumber + '(' + edt + ')';
+				break;
+			  case 14:
+				ret = 'ベランダ、バルコニー' + lowNumber + '(' + edt + ')';
+				break;
+			  case 15:
+				ret = 'その他' + lowNumber + '(' + edt + ')';
+				break;
+			  default:
+				ret = 'referSpec' + '(' + edt + ')';
+				break;
+			}
+		}
+	}
+
+	return (ret);
+};
+
+//------------------
+// Version情報
+ELconv.referSpec82 = function ( eoj, epc, edt) {
+	var ret = 'Ver. ';
+	var edtHexArray = ELconv.toHexArray( edt );
+
+	if( eoj == '0EF001' || eoj == '0EF002' ) { // プロファイルオブジェクト方式
+		ret += edtHexArray[0] + '.' + edtHexArray[1];
+
+		switch( edtHexArray[2] ) {
+		  case 1:
+			ret += ' 規定電文形式';
+			break;
+		  case 2:
+			ret += ' 任意電文形式';
+			break;
+		  case 3:
+			ret += ' 規定・任意電文形式';
+			break;
+		}
+
+	} else { // 機器オブジェクト
+		ret += Buffer( [edtHexArray[2]] ).toString('ASCII');
+	}
+
+	ret += '(' + edt + ')';
+
+
+	return ret;
+};
+
+
+//------------------
+// メーカコード
+ELconv.referSpec8A = function(eoj, epc, edt) {
+	edt = edt.toUpperCase();
+
+	var ret = 'Makercode is not found.';
+
+	if( ELconv.m_dictMakers[edt] ) {
+		ret = ELconv.m_dictMakers[edt];
+	}
+	ret += '(' + edt + ')';
+
+	return ret;
+};
+
+
+//------------------
+// プロパティマップ 9D, 9E, 9Fを解析する。下記のフォーム2とセットで
+ELconv.referSpec9D9E9F = function(eoj, epc, edt) {
+	var ret = '';
+	var array = ELconv.toHexArray( edt );
+
+	if( array.length < 16 ) { // プロパティマップ16バイト未満は記述形式１
+		array = array.map( function(e) {
+			return ELconv.toHexString(e);
+		});
+		ret = array[0];
+		ret += '[' + array.slice(1).join(', ') + ']';
+	} else {
+		// 16バイト以上なので記述形式2，EPCのarrayを作り直したら，あと同じ
+		var array = ELconv.parseMapForm2( array );
+		array = array.map( function(e) {
+			return ELconv.toHexString(e);
+		});
+		ret = array[0];
+		ret += '[' + array.slice(1).join(', ') + ']';
+	}
+	ret += '(' + edt + ')';
+	return ret;
+};
+
+// parse Propaty Map Form 2
+// 16以上のプロパティ数の時，記述形式2，出力はForm1にすること
+ELconv.parseMapForm2 = function( array ) {
+	var ret = [];
+	var val = 0x80;
+
+	// bit loop
+	for( var bit=0; bit<8; bit += 1 ) {
+		// byte loop
+		for( var byt=1; byt<17; byt+=1 ) {
+			if( (array[byt] >> bit) & 0x01 ) {
+				ret.push(val);
+			}
+			val += 1;
+		}
+	}
+
+	ret.unshift( ret.length );
+
+	return ret;
 };
 
 
@@ -305,12 +554,18 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 			}
 			break;
 
-		  case 'bitmap': // 各EPC個別対応しかできないかも？
-			ret = 'bitmap' + '(' + edt + ')';
+		  case 'bitmap': // bitmap方式
+			ret = ELconv.BITMAPtoString( edt, contentRule.bitmap ) + '(' + edt + ')';
 			break;
+
 		  case 'others': // 各EPC個別対応しかできないかも？
-			ret = contentRule.others + '(' + edt + ')';
+			if( contentRule.others == 'referSpec' ) {
+				ret = ELconv.selectReferSpec( eoj, epc, edt);
+			} else {
+				ret = contentRule.others + '(' + edt + ')';
+			}
 			break;
+
 		  default:
 			ret = contentType + '(' + edt + ')';
 			break;
