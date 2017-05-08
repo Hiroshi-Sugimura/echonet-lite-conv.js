@@ -10,7 +10,9 @@ The module to process ECHONET Lite protocol is [here](https://www.npmjs.com/pack
 
 ## Install
 
-    > npm install echonet-lite-conv
+```
+ > npm install echonet-lite-conv
+```
 
 
 ## Demos
@@ -54,68 +56,69 @@ ELconv.refer( facilities, function( devs ) {
 
 * output
 
-
-	{ IPs:
-	   [ '192.168.0.35', ...],
-	  '192.168.0.35':
-	   { EOJs: [ 'ノードプロファイル01(0ef001)', 'コントローラ01(05ff01)' ],
-	     'ノードプロファイル01(0ef001)':
-	      { EPCs:
-	         [ '動作状態(80)',
-	           'Version情報(82)',
-	           '識別番号(83)',
-	           'インスタンスリスト通知(D5)',
-	           '自ノードインスタンスリストS(D6)',
-	           '状変アナウンスプロパティマップ(9D)',
-	           'Setプロパティマップ(9E)',
-	           'Getプロパティマップ(9F)',
-	           'メーカコード(8A)',
-	           '自ノードインスタンス数(D3)',
-	           '自ノードクラス数(D4)',
-	           '自ノードクラスリストS(D7)' ],
-	        '動作状態(80)': 'ON(30)',
-	        'Version情報(82)': 'referSpec(010A0100)',
-	        '識別番号(83)': 'referSpec(FE00000000000000000000000000000000)',
-	        'インスタンスリスト通知(D5)': 'keyValues(0105FF01)',
-	        '自ノードインスタンスリストS(D6)': 'コントローラ01(0105FF01)',
-	        '状変アナウンスプロパティマップ(9D)': 'referSpec(0280D5)',
-	        'Setプロパティマップ(9E)': 'referSpec(00)',
-	        'Getプロパティマップ(9F)': 'referSpec(098082838AD3D4D5D6D7)',
-	        'メーカコード(8A)': 'referSpec(000077)',
-	        '自ノードインスタンス数(D3)': '1(000001)',
-	        '自ノードクラス数(D4)': '2(0002)',
-	        '自ノードクラスリストS(D7)': 'コントローラ(0105FF)' },
-	     'コントローラ01(05ff01)': { EPCs: [ '動作状態(80)' ], '動作状態(80)': 'ON(30)' } },
-	.
-	.
-	.
-
+```JavaScript:output
+{ IPs:
+   [ '192.168.0.35', ...],
+  '192.168.0.35':
+   { EOJs: [ 'ノードプロファイル01(0ef001)', 'コントローラ01(05ff01)' ],
+     'ノードプロファイル01(0ef001)':
+      { EPCs:
+         [ '動作状態(80)',
+           'Version情報(82)',
+           '識別番号(83)',
+           'インスタンスリスト通知(D5)',
+           '自ノードインスタンスリストS(D6)',
+           '状変アナウンスプロパティマップ(9D)',
+           'Setプロパティマップ(9E)',
+           'Getプロパティマップ(9F)',
+           'メーカコード(8A)',
+           '自ノードインスタンス数(D3)',
+           '自ノードクラス数(D4)',
+           '自ノードクラスリストS(D7)' ],
+        '動作状態(80)': 'ON(30)',
+        'Version情報(82)': 'referSpec(010A0100)',
+        '識別番号(83)': 'referSpec(FE00000000000000000000000000000000)',
+        'インスタンスリスト通知(D5)': 'keyValues(0105FF01)',
+        '自ノードインスタンスリストS(D6)': 'コントローラ01(0105FF01)',
+        '状変アナウンスプロパティマップ(9D)': 'referSpec(0280D5)',
+        'Setプロパティマップ(9E)': 'referSpec(00)',
+        'Getプロパティマップ(9F)': 'referSpec(098082838AD3D4D5D6D7)',
+        'メーカコード(8A)': 'referSpec(000077)',
+        '自ノードインスタンス数(D3)': '1(000001)',
+        '自ノードクラス数(D4)': '2(0002)',
+        '自ノードクラスリストS(D7)': 'コントローラ(0105FF)' },
+     'コントローラ01(05ff01)': { EPCs: [ '動作状態(80)' ], '動作状態(80)': 'ON(30)' } },
+.
+.
+.
+```
 
 
 ## Stracture of input facilities data
 
-
-	{ '192.168.2.103':
-	   { '05ff01': { '80': '', d6: '' },
-	     '0ef001': { '80': '30', d6: '0100' } },
-	  '192.168.2.104': { '0ef001': { d6: '0105ff01' }, '05ff01': { '80': '30' } },
-	  '192.168.2.115': { '0ef001': { '80': '30', d6: '01013501' } } }
-
+```
+{ '192.168.2.103':
+   { '05ff01': { '80': '', d6: '' },
+     '0ef001': { '80': '30', d6: '0100' } },
+  '192.168.2.104': { '0ef001': { d6: '0105ff01' }, '05ff01': { '80': '30' } },
+  '192.168.2.115': { '0ef001': { '80': '30', d6: '01013501' } } }
+```
 
 
 ## Stracture of result data
 
-
-    { IPs: [ '<ip1>', '<ip2>' ],
-      '<ip1>': { EPCs: [ '<epc1>', '<epc2>' ],
-                '<epc1>': '<edt1>',
-                '<epc2>': '<edt2>'
-               }
-      '<ip2>': { EPCs: [ '<epc3>', '<epc4>'],
-                '<epc3>': '<edt3>',
-                '<epc4>': '<edt4>'
-               }
-    }
+```
+{ IPs: [ '<ip1>', '<ip2>' ],
+  '<ip1>': { EPCs: [ '<epc1>', '<epc2>' ],
+            '<epc1>': '<edt1>',
+            '<epc2>': '<edt2>'
+           }
+  '<ip2>': { EPCs: [ '<epc3>', '<epc4>'],
+            '<epc3>': '<edt3>',
+            '<epc4>': '<edt4>'
+           }
+}
+```
 
 
 
@@ -128,15 +131,19 @@ ELconv.refer( facilities, function( devs ) {
 * First, you must initialize this converter.
 コンバータを初期化しておく（JSON形式の定義データを読む）
 
-    ELconv.initialize();
+```
+ELconv.initialize();
+```
 
 
 * You can use this converter as following.
 こんな感じでテキスト参照に変換できる
 
-    ELconv.refer( facilities, function( devs ) {
-    	console.dir(devs);
-    });
+```
+ELconv.refer( facilities, function( devs ) {
+	console.dir(devs);
+});
+```
 
 
 
@@ -146,12 +153,13 @@ Demosを見ればだいたいわかると思う．EDTにアクセスするには
 
 For using this module, data accesing sample is following.
 
-    ip  = devs.IPs[3];                // '192.168.2.159'
-    eoj = devs[ip].EOJs[1];           // 'Node profile01'
-    epc = devs[ip][eoj].EPCs[0];      // 'Operation status'
-    edt = devs[ip][eoj][epc];         // '30'
-    console.log( edt );
-
+```
+ip  = devs.IPs[3];                // '192.168.2.159'
+eoj = devs[ip].EOJs[1];           // 'Node profile01'
+epc = devs[ip][eoj].EPCs[0];      // 'Operation status'
+edt = devs[ip][eoj][epc];         // '30'
+console.log( edt );
+```
 
 
 ## Memo
@@ -242,6 +250,8 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 
 
 ## Log
+
+0.0.16 README.md修正
 
 0.0.15 Version情報に対応した．すごく古いバージョンにはうまく対応できていないかもしれない．
 
