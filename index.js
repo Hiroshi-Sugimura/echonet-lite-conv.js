@@ -3,8 +3,10 @@
 //	$Rev: 9416 $
 //	Copyright (C) Hiroshi SUGIMURA 2016.04.03 - above.
 //////////////////////////////////////////////////////////////////////
+'use strict'
 
 //////////////////////////////////////////////////////////////////////
+const Encoding = require('encoding-japanese');
 const fs = require('fs');
 
 // クラス変数
@@ -108,8 +110,7 @@ ELconv.MStoString = function( ms ) {  // Minute(1byte), Second(1byte)
 // rawData
 ELconv.HEXStringtoShiftJIS = function( hexString ) {
 	var array = ELconv.toHexArray( hexString );
-
-	return 'hoge';
+    return ( Encoding.codeToString(Encoding.convert(array)) );
 };
 
 ELconv.HEXStringtoASCII = function( hexString ) {
@@ -122,7 +123,7 @@ ELconv.BITMAPtoString = function( edt, typeArray ) {
 	var ret = '';
 	var x = parseInt( edt );
 
-	for( i = 0; i < typeArray.length; i += 1 ) {
+	for( var i = 0; i < typeArray.length; i += 1 ) {
 		ret += typeArray[i].bitName + ':' + typeArray[i].bitValues[(x >> i) & 1] + ',';
 	}
 	ret = ret.slice(0, -1);
@@ -150,7 +151,7 @@ ELconv.refEPC = function(eoj, epc) {
 	var ret = epc = epc.toUpperCase();
 
 	// F0からFFまではuser defined
-	upper = epc.substr( 0, 1 );
+	var upper = epc.substr( 0, 1 );
 	if( upper == 'F' ) {
 		ret = 'ユーザ定義領域(' + epc + ')';
 	}
@@ -427,11 +428,11 @@ ELconv.refer = function( facilities, callback ) {
 		ret.IPs.push(ip);
 		ret[ip] = {'EOJs': []}
 		Object.keys( facilities[ip] ).forEach( function (eoj) { // eoj
-			retEoj = ELconv.refEOJ(eoj) + '(' + eoj + ')';
+			var retEoj = ELconv.refEOJ(eoj) + '(' + eoj + ')';
 			ret[ip].EOJs.push( retEoj );
 			ret[ip][retEoj] = { 'EPCs': [] };
 			Object.keys( facilities[ip][eoj] ).forEach( function (epc) { // epc
-				retEpc = ELconv.refEPC(eoj, epc);
+				var retEpc = ELconv.refEPC(eoj, epc);
 				ret[ip][retEoj].EPCs.push(retEpc);
 				ret[ip][retEoj][retEpc] = ELconv.parseEDT( eoj, epc, facilities[ip][eoj][epc] ); //edt
 			});
@@ -455,7 +456,7 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 	var ret;
 
 	// F0からFFまではuser defined
-	upper = epc.substr( 0, 1 );
+	var upper = epc.substr( 0, 1 );
 	if( upper == 'F' ) {
 		ret = 'ユーザ定義領域(' + edt + ')';
 		return ret;
@@ -490,6 +491,8 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 				ret = ELconv.HEXStringtoASCII(edt) + '(ascii:' + edt + ')';
 				break;
 			  case 'ShiftJIS':
+                ret = ELconv.HEXStringtoShiftJIS(edt) + '(ShiftJIS:' + edt + ')';
+                break;
 			  case 'binary':
 			  default:
 				ret = contentRule.rawData + '(' + edt + ')';

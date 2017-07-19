@@ -1,8 +1,11 @@
 {
   "name": "echonet-lite-conv",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "This module provides converter for ECHONET Lite protocol API.",
   "main": "index.js",
+  "dependencies": {
+    "encoding-japanese": "^1.0.25"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

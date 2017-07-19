@@ -1,35 +1,48 @@
-# Overview
+# Overview，概要
 
 このモジュールは**ECHONET Liteプロトコルのコンバーター**として機能します．
-基本的に，[echonet-lite.js](https://www.npmjs.com/package/echonet-lite)とセットで利用することを想定しています．
+基本的に，[echonet-lite.js](https://www.npmjs.com/package/echonet-lite)とセットで利用することを想定していますが単体でも利用できます．
 
 This module provides **converter for ECHONET Lite protocol**.
 The module to process ECHONET Lite protocol is [here](https://www.npmjs.com/package/echonet-lite).
 
 
 
-## Install
+## Install，インストール
+
+下記コマンドでインストールされます．
+
+Install this module.
 
 ```
  > npm install echonet-lite-conv
 ```
 
+### Dependencies, 依存関係
+このモジュールは"encoding-japanese"の"^1.0.25."に依存しています．
+package.jsonが自動的にインストールしてくれる予定です．
+
+This module depends on "encoding-japanese": "^1.0.25."
+The package.json will solve dependencies.
+
 
 ## Demos
 
+下記のように使えます．
 
-* An example of a script
+An example of a script is following:
 
 ```JavaScript:example
 //==================================
-// EL最小構成, minimum sample
-// ECHONET Liteのコンバーターを準備しておいて
+// EL最小構成, EL minimum sample
+// ECHONET Liteのコンバーターを準備, ready this module
 var ELconv = require('echonet-lite-conv');
 //==================================
-// コンバータを初期化しておく（JSON形式の定義データを読む）
+// コンバータを初期化しておく（JSON形式の定義データを読む）, initialize this module
 ELconv.initialize();
 //==================================
 // require('echonet-lite') で利用される EL.facilities の受信データがこんな感じで管理されるので
+// facilities are managed by 'echonet-lite' module.
 var facilities =
 { '192.168.2.104':
    { '05ff01': { '80': '30', d6: '' },
@@ -48,13 +61,16 @@ var facilities =
     '192.168.2.103': { '05ff01': { '80': '', d6: '' } } };
 //==================================
 // こんな感じでテキスト参照に変換できる
+// converter works as follow.
 ELconv.refer( facilities, function( devs ) {
-    console.dir(devs);
+    console.dir(devs);  // result
 });
 ```
 
 
-* output
+* result (= devs in ELconv.refer function)
+
+console.dir( devs );
 
 ```JavaScript:output
 { IPs:
@@ -251,6 +267,8 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 
 ## Log
 
+0.0.17 'use strict'対応，rawData:ShiftJIS対応（オーブンレンジの0xEAくらいしかないのだが）
+
 0.0.16 README.md修正
 
 0.0.15 Version情報に対応した．すごく古いバージョンにはうまく対応できていないかもしれない．
@@ -286,8 +304,7 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 
 ## Known Issues（既知の問題）
 
-* 本当はRelease versionをみて，対応したバージョンの辞書を参考にしないといけないが，いまは最新データベースしか見に行っていない．
-* rawData:ShiftJIS変換どうすればよいのか．
+* 本当はRelease versionをみて，対応したバージョンの辞書を参考にしないといけないが，いまは最新データベースしか見に行っていない．たとえば古いEL機器は製造番号8DがASCIIでなくて0が入っていたりする。
 * levelタイプの，クッキングヒータクラスの加熱出力設定には非対応．
 * 英語に対応してない（JSON DBの英語対応待ち）．
 * 設置場所17バイト方式の，緯度経度高さ方式の16バイトの割り当てが不明．
