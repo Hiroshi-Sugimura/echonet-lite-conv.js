@@ -3,17 +3,15 @@
 //	$Rev: 9416 $
 //	Copyright (C) Hiroshi SUGIMURA 2016.04.03 - above.
 //////////////////////////////////////////////////////////////////////
-'use strict'
 
 //////////////////////////////////////////////////////////////////////
-const Encoding = require('encoding-japanese');
 const fs = require('fs');
 
 // クラス変数
 var ELconv = {
-  m_dict: {},
-  m_latestSpec: '1.12',
-  m_latestAppendix:'I'
+    m_dict: {},
+    m_latestSpec: '1.12',
+    m_latestAppendix:'I'
 };
 
 
@@ -110,7 +108,8 @@ ELconv.MStoString = function( ms ) {  // Minute(1byte), Second(1byte)
 // rawData
 ELconv.HEXStringtoShiftJIS = function( hexString ) {
 	var array = ELconv.toHexArray( hexString );
-    return ( Encoding.codeToString(Encoding.convert(array)) );
+
+	return 'hoge';
 };
 
 ELconv.HEXStringtoASCII = function( hexString ) {
@@ -123,7 +122,7 @@ ELconv.BITMAPtoString = function( edt, typeArray ) {
 	var ret = '';
 	var x = parseInt( edt );
 
-	for( var i = 0; i < typeArray.length; i += 1 ) {
+	for( i = 0; i < typeArray.length; i += 1 ) {
 		ret += typeArray[i].bitName + ':' + typeArray[i].bitValues[(x >> i) & 1] + ',';
 	}
 	ret = ret.slice(0, -1);
@@ -151,7 +150,7 @@ ELconv.refEPC = function(eoj, epc) {
 	var ret = epc = epc.toUpperCase();
 
 	// F0からFFまではuser defined
-	var upper = epc.substr( 0, 1 );
+	upper = epc.substr( 0, 1 );
 	if( upper == 'F' ) {
 		ret = 'ユーザ定義領域(' + epc + ')';
 	}
@@ -263,53 +262,53 @@ ELconv.referSpec81 = function(eoj, epc, edt) {
 			var lowNumber = (x & 0x07);
 
 			switch( highNumber ) {
-			  case 1:
+			case 1:
 				ret = '居間、リビング' + lowNumber + '(' + edt + ')';
 
 				break;
-			  case 2:
+			case 2:
 				ret = '食堂、ダイニング' + lowNumber + '(' + edt + ')';
 				break;
-			  case 3:
+			case 3:
 				ret = '台所、キッチン' + lowNumber + '(' + edt + ')';
 				break;
-			  case 4:
+			case 4:
 				ret = '浴槽、バス' + lowNumber + '(' + edt + ')';
 				break;
-			  case 5:
+			case 5:
 				ret = 'トイレ' + lowNumber + '(' + edt + ')';
 				break;
-			  case 6:
+			case 6:
 				ret = '洗面所、脱衣所' + lowNumber + '(' + edt + ')';
 				break;
-			  case 7:
+			case 7:
 				ret = '廊下' + lowNumber + '(' + edt + ')';
 				break;
-			  case 8:
+			case 8:
 				ret = '部屋' + lowNumber + '(' + edt + ')';
 				break;
-			  case 9:
+			case 9:
 				ret = '階段' + lowNumber + '(' + edt + ')';
 				break;
-			  case 10:
+			case 10:
 				ret = '玄関' + lowNumber + '(' + edt + ')';
 				break;
-			  case 11:
+			case 11:
 				ret = '納屋' + lowNumber + '(' + edt + ')';
 				break;
-			  case 12:
+			case 12:
 				ret = '庭、外周' + lowNumber + '(' + edt + ')';
 				break;
-			  case 13:
+			case 13:
 				ret = '車庫' + lowNumber + '(' + edt + ')';
 				break;
-			  case 14:
+			case 14:
 				ret = 'ベランダ、バルコニー' + lowNumber + '(' + edt + ')';
 				break;
-			  case 15:
+			case 15:
 				ret = 'その他' + lowNumber + '(' + edt + ')';
 				break;
-			  default:
+			default:
 				ret = 'referSpec' + '(' + edt + ')';
 				break;
 			}
@@ -329,13 +328,13 @@ ELconv.referSpec82 = function ( eoj, epc, edt) {
 		ret += edtHexArray[0] + '.' + edtHexArray[1];
 
 		switch( edtHexArray[2] ) {
-		  case 1:
+		case 1:
 			ret += ' 規定電文形式';
 			break;
-		  case 2:
+		case 2:
 			ret += ' 任意電文形式';
 			break;
-		  case 3:
+		case 3:
 			ret += ' 規定・任意電文形式';
 			break;
 		}
@@ -428,11 +427,11 @@ ELconv.refer = function( facilities, callback ) {
 		ret.IPs.push(ip);
 		ret[ip] = {'EOJs': []}
 		Object.keys( facilities[ip] ).forEach( function (eoj) { // eoj
-			var retEoj = ELconv.refEOJ(eoj) + '(' + eoj + ')';
+			retEoj = ELconv.refEOJ(eoj) + '(' + eoj + ')';
 			ret[ip].EOJs.push( retEoj );
 			ret[ip][retEoj] = { 'EPCs': [] };
 			Object.keys( facilities[ip][eoj] ).forEach( function (epc) { // epc
-				var retEpc = ELconv.refEPC(eoj, epc);
+				retEpc = ELconv.refEPC(eoj, epc);
 				ret[ip][retEoj].EPCs.push(retEpc);
 				ret[ip][retEoj][retEpc] = ELconv.parseEDT( eoj, epc, facilities[ip][eoj][epc] ); //edt
 			});
@@ -456,7 +455,7 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 	var ret;
 
 	// F0からFFまではuser defined
-	var upper = epc.substr( 0, 1 );
+	upper = epc.substr( 0, 1 );
 	if( upper == 'F' ) {
 		ret = 'ユーザ定義領域(' + edt + ')';
 		return ret;
@@ -485,30 +484,28 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 	// 1.content typeをみてみる
 	for (var contentType in contentRule) {
 		switch (contentType){
-		  case 'rawData':				// rawData
+		case 'rawData':				// rawData
 			switch (contentRule.rawData) {
-			  case 'ASCII':
+			case 'ASCII':
 				ret = ELconv.HEXStringtoASCII(edt) + '(ascii:' + edt + ')';
 				break;
-			  case 'ShiftJIS':
-                ret = ELconv.HEXStringtoShiftJIS(edt) + '(ShiftJIS:' + edt + ')';
-                break;
-			  case 'binary':
-			  default:
+			case 'ShiftJIS':
+			case 'binary':
+			default:
 				ret = contentRule.rawData + '(' + edt + ')';
 				break;
 			}
 			break;
 
-		  case 'numericValue':			// numericValue
+		case 'numericValue':			// numericValue
 			var val = 0;
 			switch (contentRule.numericValue.integerType) {
-			  case 'Signed':
+			case 'Signed':
 				val = parseInt( edt, 16);  // signedにしたい
 				if (val > 127) { val = val - 256 }
 				break;
-			  case 'Unsigned':
-			  default:
+			case 'Unsigned':
+			default:
 				// エラー返すのどうしたらいいかわからん。
 				val = parseInt( edt, 16);
 				break;
@@ -527,41 +524,41 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 			ret = val * Math.pow(10, mag) + unit + '(' + edt + ')';
 			break;
 
-		  case 'level': // Rel.I, クッキングヒータクラスの加熱出力設定には非対応
+		case 'level': // Rel.I, クッキングヒータクラスの加熱出力設定には非対応
 			var val = parseInt( edt, 16);
 			var min = parseInt( contentRule.level.min, 10);
 			val -= min + 1;
 			ret = 'level ' + val + '(' + edt + ')';
 			break;
 
-		  case 'customType':  // 時間
+		case 'customType':  // 時間
 			switch( contentRule.customType ) {
-			  case 'YYM':  // Year(2byte), Month(1byte)
+			case 'YYM':  // Year(2byte), Month(1byte)
 				ret = ELconv.MStoString( edt ) + '(' + edt + ')';
 				break;
-			  case 'YYMD': // Year(2byte), Month(1byte), Day(1byte)
+			case 'YYMD': // Year(2byte), Month(1byte), Day(1byte)
 				ret = ELconv.YYMDtoString( edt ) + '(' + edt + ')';
 				break;
-			  case 'HM':   // Hour(1byte), Minute(1byte)
+			case 'HM':   // Hour(1byte), Minute(1byte)
 				ret = ELconv.HMtoString( edt ) + '(' + edt + ')';
 				break;
-			  case 'HMS':  // Hour(1byte), Minute(1byte), Second(1byte)
+			case 'HMS':  // Hour(1byte), Minute(1byte), Second(1byte)
 				ret = ELconv.HMStoString( edt ) + '(' + edt + ')';
 				break;
-			  case 'HMF':  // Hour(1byte), Minute(1byte), Frame(1byte)
+			case 'HMF':  // Hour(1byte), Minute(1byte), Frame(1byte)
 				ret = ELconv.HMFtoString( edt ) + '(' + edt + ')';
 				break;
-			  case 'MS':   // Minute(1byte), Second(1byte)
+			case 'MS':   // Minute(1byte), Second(1byte)
 				ret = ELconv.MStoString( edt ) + '(' + edt + ')';
 				break;
 			}
 			break;
 
-		  case 'bitmap': // bitmap方式
+		case 'bitmap': // bitmap方式
 			ret = ELconv.BITMAPtoString( edt, contentRule.bitmap ) + '(' + edt + ')';
 			break;
 
-		  case 'others': // 各EPC個別対応しかできないかも？
+		case 'others': // 各EPC個別対応しかできないかも？
 			if( contentRule.others == 'referSpec' ) {
 				ret = ELconv.selectReferSpec( eoj, epc, edt);
 			} else {
@@ -569,7 +566,7 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 			}
 			break;
 
-		  default:
+		default:
 			ret = contentType + '(' + edt + ')';
 			break;
 		}
@@ -606,6 +603,61 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 
 	return ret;
 };
+
+
+
+// ESVのマッピング
+ELconv.refESV = function(esv)  {
+
+    console.dir (esv);
+
+    var esv_dict = {
+        "50":   'SETI_SNA',
+        "51":  'SETC_SNA',
+        "52":  'GET_SNA',
+        "53":  'INF_SNA',
+        "5e": 'SETGET_SNA',
+        "60": 'SETI',
+        "61": 'SETC', 
+        "62": 'GET',
+        "63": 'INF_REQ',
+        "6e": 'SETGET',
+        "71": 'SET_RES',
+        "72": 'GET_RES',
+        "73": 'INF',
+        "74": 'INFC',
+        "7a": 'INFC_RES', 
+        "7e": 'SETGET_RES' };
+    return  ( esv_dict[esv] );
+};
+
+
+// elsを解析する
+ELconv.elsAnarysis = function( els, callback ) {
+
+	var ret = { 'EHD': 'ECHONET Lite',
+                'TID': '??',
+                'SEOJ': '??',
+                'DEOJ': '??',
+                'ESV': '??',
+                'OPC': '??',
+                'EDT': {} };
+
+    ret.TID = els.TID;
+    ret.SEOJ = ELconv.refEOJ( els.SEOJ );
+    ret.DEOJ = ELconv.refEOJ( els.DEOJ );
+    ret.ESV = ELconv.refESV(els.ESV);
+    ret.OPC = els.OPC;
+
+    // EDT だけ少し面倒くさい
+    Object.keys( els.DETAILs ).forEach( function (epc) { // epc
+		var retEpc = ELconv.refEPC( els.DEOJ, epc);
+		ret['EDT'][retEpc] = ELconv.parseEDT( els.DEOJ, epc, els.DETAILs[epc] ); //edt
+	});
+
+	callback( ret );
+};
+
 
 
 module.exports = ELconv;
