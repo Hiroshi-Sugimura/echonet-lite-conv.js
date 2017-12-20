@@ -1,54 +1,22 @@
 {
-  "Keywords": [
-    "ECHONET Lite",
-    "Smart house",
-    "IoT",
-    "Home appliances",
-    "Converter"
-  ],
-  "_from": "echonet-lite-conv@^0.0.16",
-  "_id": "echonet-lite-conv@0.0.16",
-  "_inBundle": false,
-  "_integrity": "sha1-+ziZIEDcV0zWT4cmkDieqhIWI0w=",
-  "_location": "/echonet-lite-conv",
-  "_phantomChildren": {},
-  "_requested": {
-    "type": "range",
-    "registry": true,
-    "raw": "echonet-lite-conv@^0.0.16",
-    "name": "echonet-lite-conv",
-    "escapedName": "echonet-lite-conv",
-    "rawSpec": "^0.0.16",
-    "saveSpec": null,
-    "fetchSpec": "^0.0.16"
-  },
-  "_requiredBy": [
-    "#USER",
-    "/"
-  ],
-  "_resolved": "https://registry.npmjs.org/echonet-lite-conv/-/echonet-lite-conv-0.0.16.tgz",
-  "_shasum": "fb38992040dc574cd64f872690389eaa1216234c",
-  "_spec": "echonet-lite-conv@^0.0.16",
-  "_where": "/Users/sugimura/Documents/work/program/javaScript/01EL/10npmELConverter",
-  "author": {
-    "name": "Hiroshi SUGIMURA"
-  },
-  "bugs": {
-    "url": "https://github.com/Hiroshi-Sugimura/echonet-lite-conv.js/issues"
-  },
-  "bundleDependencies": false,
-  "deprecated": false,
-  "description": "This module provides converter for ECHONET Lite protocol API.",
-  "homepage": "https://github.com/Hiroshi-Sugimura/echonet-lite-conv.js#readme",
-  "license": "MIT",
-  "main": "index.js",
   "name": "echonet-lite-conv",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Hiroshi-Sugimura/echonet-lite-conv.js.git"
+  "version": "0.0.18",
+  "description": "This module provides converter for ECHONET Lite protocol API.",
+  "main": "index.js",
+  "dependencies": {
+    "encoding-japanese": "^1.0.25"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "0.0.17"
+  "repository" :
+  {
+    "type" : "git",
+    "url" : "https://github.com/Hiroshi-Sugimura/echonet-lite-conv.js"
+  },
+  "author": {
+    "name": "Hiroshi SUGIMURA"
+  },
+  "license": "MIT",
+  "Keywords": ["ECHONET Lite", "Smart house", "IoT", "Home appliances", "Converter"]
 }
