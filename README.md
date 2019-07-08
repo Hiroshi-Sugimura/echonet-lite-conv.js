@@ -267,6 +267,8 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 
 ## Log
 
+0.0.19 refESVでESVがコンソールにでるバグを修正
+
 0.0.18 elsの解析に対応
 
 0.0.17 'use strict'対応，rawData:ShiftJIS対応（オーブンレンジの0xEAくらいしかないのだが）

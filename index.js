@@ -609,9 +609,6 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 
 // ESVのマッピング
 ELconv.refESV = function(esv)  {
-
-    console.dir (esv);
-
     var esv_dict = {
         "50":   'SETI_SNA',
         "51":  'SETC_SNA',
