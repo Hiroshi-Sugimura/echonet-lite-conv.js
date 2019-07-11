@@ -267,6 +267,8 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 
 ## Log
 
+0.0.20 GETはEDT00固定なので，それに対応
+
 0.0.19 refESVでESVがコンソールにでるバグを修正
 
 0.0.18 elsの解析に対応
@@ -314,4 +316,3 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 * 設置場所17バイト方式の，緯度経度高さ方式の16バイトの割り当てが不明．
 * RepeatCount非対応
 * データタイプothersはオブジェクト別対応のため，非対応
-
