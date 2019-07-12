@@ -194,7 +194,9 @@ ELconv.selectReferSpec = function( eoj, epc, edt ) {
 		    ret = ELconv.referSpec81( eoj, epc, edt);
 	  } else if( epc == '82' ) { // Version情報
 		    ret = ELconv.referSpec82( eoj, epc, edt);
-	  } else if( epc == '8A' ) { // メーカコード
+	  } else if( epc == '83' ) { // 識別番号
+		    ret = edt;
+    }else if( epc == '8A' ) { // メーカコード
 		    ret = ELconv.referSpec8A( eoj, epc, edt);
 	  } else if( epc == '9D' || epc == '9E' || epc == '9F' ) {
 		    ret = ELconv.referSpec9D9E9F( eoj, epc, edt);
@@ -653,11 +655,41 @@ ELconv.elsAnarysis = function( els, callback ) {
 
     // EDT だけ少し面倒くさい
     Object.keys( els.DETAILs ).forEach( function (epc) { // epc
-		    let retEpc = ELconv.refEPC( els.DEOJ, epc);
-        if( els.ESV == '62' ) {
-		        ret['EDT'][retEpc] = 'Fixed(00)'; //edt
-        }else{
+		    let retEpc;
+        switch( els.ESV  ) {
+        case '60': // SETIはDEOJを参照
+        case '61': // SETC
+		        retEpc = ELconv.refEPC( els.DEOJ, epc);
 		        ret['EDT'][retEpc] = ELconv.parseEDT( els.DEOJ, epc, els.DETAILs[epc] ); //edt
+            break;
+
+        case '62': // GETはEDT=00
+        case '63': // INF_REQ
+        case '6e':
+		        retEpc = ELconv.refEPC( els.DEOJ, epc);
+		        ret['EDT'][retEpc] = 'Request(00)'; //edt
+            break;
+
+            // returnはSEOJを参照
+        case '50': // seti_sna
+        case '51': // setc_sna
+        case '52': // get_sna
+        case '53': // inf_sna
+        case '5e': // setget_sna
+        case '71': // set_res
+        case '72': // get_res
+        case '73': // inf
+        case '74': // infc
+        case '7a': // infc_res
+        case '7e': // setget_res
+		        retEpc = ELconv.refEPC( els.SEOJ, epc);
+		        ret['EDT'][retEpc] = ELconv.parseEDT( els.SEOJ, epc, els.DETAILs[epc] ); //edt
+            break;
+
+        default:
+		        retEpc = ELconv.refEPC( els.DEOJ, epc);
+		        ret['EDT'][retEpc] = 'unknown(' + els.DETAILs[epc] + ')'; //edt
+            break;
         }
 	  });
 
