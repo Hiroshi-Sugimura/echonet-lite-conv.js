@@ -267,6 +267,8 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 
 ## Log
 
+0.0.21 let対応，unit test，Release対応
+
 0.0.20 GETはEDT00固定なので，それに対応
 
 0.0.19 refESVでESVがコンソールにでるバグを修正

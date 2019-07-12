@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////
 //	$Date:: 2016-04-03 17:56:33 +0900#$
 //	$Rev: 9416 $
-//	Copyright (C) Hiroshi SUGIMURA 2016.04.03 - above.
+//	Copyright (C) Hiroshi SUGIMURA 2016.04.03.
 //////////////////////////////////////////////////////////////////////
 'use strict'
 
@@ -10,7 +10,7 @@ const Encoding = require('encoding-japanese');
 const fs = require('fs');
 
 // クラス変数
-var ELconv = {
+let ELconv = {
     m_dict: {},
     m_latestSpec: '1.12',
     m_latestAppendix:'I'
@@ -49,8 +49,8 @@ ELconv.toHexString = function( byte ) {
 
 // 2進表現の文字列を数値のバイト配列へ
 ELconv.toHexArray = function( string ) {
-	  var ret = [];
-	  var i, l, r;
+	  let ret = [];
+	  let i, l, r;
 
 	  for( i=0; i < string.length; i += 2 ) {
 		    l = string.substr( i, 1 );
@@ -63,14 +63,14 @@ ELconv.toHexArray = function( string ) {
 
 // contentType = customType
 ELconv.YYMtoString = function( yym ) {  // Year(2byte), Month(1byte)
-	  var yy, m;
+	  let yy, m;
 	  yy = yym.substr( 0, 4 );
 	  m  = yym.substr( 4, 2 );
 	  return parseInt( yy, 16 ) + '.' + parseInt( m, 16);
 };
 
 ELconv.YYMDtoString = function( yymd ) { // Year(2byte), Month(1byte), Day(1byte)
-	  var yy, m, d;
+	  let yy, m, d;
 	  yy = yymd.substr( 0, 4 );
 	  m  = yymd.substr( 4, 2 );
 	  d  = yymd.substr( 6, 2 );
@@ -78,14 +78,14 @@ ELconv.YYMDtoString = function( yymd ) { // Year(2byte), Month(1byte), Day(1byte
 };
 
 ELconv.HMtoString = function( hm ) {  // Hour(1byte), Minute(1byte)
-	  var h, m;
+	  let h, m;
 	  h = hm.substr( 0, 2 );
 	  m = hm.substr( 2, 2 );
 	  return parseInt( h, 16 ) + '.' + parseInt( m, 16);
 };
 
 ELconv.HMStoString = function( hms ) { // Hour(1byte), Minute(1byte), Second(1byte)
-	  var h, m, s;
+	  let h, m, s;
 	  h = hms.substr( 0, 2 );
 	  m = hms.substr( 2, 2 );
 	  s = hms.substr( 4, 2 );
@@ -93,37 +93,37 @@ ELconv.HMStoString = function( hms ) { // Hour(1byte), Minute(1byte), Second(1by
 };
 
 ELconv.HMFtoString = function( hmf ) { // Hour(1byte), Minute(1byte), Frame(1byte)
-	  var h, m, f;
-	  h = hms.substr( 0, 2 );
-	  m = hms.substr( 2, 2 );
-	  f = hms.substr( 4, 2 );
+	  let h, m, f;
+	  h = hmf.substr( 0, 2 );
+	  m = hmf.substr( 2, 2 );
+	  f = hmf.substr( 4, 2 );
 	  return parseInt( h, 16 ) + '.' + parseInt( m, 16) + '.' + parseInt( f, 16);
 };
 
 ELconv.MStoString = function( ms ) {  // Minute(1byte), Second(1byte)
-	  var h, s;
-	  m = hms.substr( 0, 2 );
-	  s = hms.substr( 2, 2 );
+	  let m, s;
+	  m = ms.substr( 0, 2 );
+	  s = ms.substr( 2, 2 );
 	  return parseInt( m, 16 ) + '.' + parseInt( s, 16);
 };
 
 // rawData
 ELconv.HEXStringtoShiftJIS = function( hexString ) {
-	  var array = ELconv.toHexArray( hexString );
+	  let array = ELconv.toHexArray( hexString );
     return ( Encoding.codeToString(Encoding.convert(array)) );
 };
 
 ELconv.HEXStringtoASCII = function( hexString ) {
-	  var array = ELconv.toHexArray( hexString );
+	  let array = ELconv.toHexArray( hexString );
 	  return Buffer(array).toString('ASCII');
 };
 
 
 ELconv.BITMAPtoString = function( edt, typeArray ) {
-	  var ret = '';
-	  var x = parseInt( edt );
+	  let ret = '';
+	  let x = parseInt( edt );
 
-	  for( var i = 0; i < typeArray.length; i += 1 ) {
+	  for( let i = 0; i < typeArray.length; i += 1 ) {
 		    ret += typeArray[i].bitName + ':' + typeArray[i].bitValues[(x >> i) & 1] + ',';
 	  }
 	  ret = ret.slice(0, -1);
@@ -134,7 +134,7 @@ ELconv.BITMAPtoString = function( edt, typeArray ) {
 
 // EOJを文字列へ
 ELconv.refEOJ = function(eoj) {
-	  var ret = eoj = eoj.toUpperCase();
+	  let ret = eoj = eoj.toUpperCase();
 	  if( eoj.substr(0,4) == '0EF0' ) {
 		    ret = ELconv.m_dictNod.elObjects['0x0EF0'].objectName + eoj.substr(4,2);
 	  }
@@ -148,10 +148,10 @@ ELconv.refEOJ = function(eoj) {
 // EPCを文字列へ
 ELconv.refEPC = function(eoj, epc) {
 	  eoj = eoj.toUpperCase();
-	  var ret = epc = epc.toUpperCase();
+	  let ret = epc = epc.toUpperCase();
 
 	  // F0からFFまではuser defined
-	  var upper = epc.substr( 0, 1 );
+	  let upper = epc.substr( 0, 1 );
 	  if( upper == 'F' ) {
 		    ret = 'ユーザ定義領域(' + epc + ')';
 	  }
@@ -162,7 +162,7 @@ ELconv.refEPC = function(eoj, epc) {
 	  }
 
 	  if( eoj.substr(0, 4) == '0EF0' ) {  // node profile object
-		    var devProps = ELconv.m_dictNod.elObjects['0x'+eoj.substr(0, 4)];
+		    let devProps = ELconv.m_dictNod.elObjects['0x'+eoj.substr(0, 4)];
 		    if( '0x'+epc in devProps.epcs ) { // 指定のEPCはあるか？
 			      ret = devProps.epcs['0x'+epc].epcName  + '(' + epc + ')';
 		    }
@@ -170,7 +170,7 @@ ELconv.refEPC = function(eoj, epc) {
 
 	  // 各機器固有のEPCか？
 	  if( ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)] ) {  // 指定のEOJはあるか？
-		    var devProps = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)];
+		    let devProps = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)];
 		    if( '0x'+epc in devProps.epcs ) { // 指定のEPCはあるか？
 			      ret = devProps.epcs['0x'+epc].epcName  + '(' + epc + ')';
 		    }
@@ -185,7 +185,7 @@ ELconv.refEPC = function(eoj, epc) {
 
 // referSpecをEOJとEPCで振り分け
 ELconv.selectReferSpec = function( eoj, epc, edt ) {
-	  var ret;
+	  let ret;
 	  eoj = eoj.toUpperCase();
 	  epc = epc.toUpperCase();
 	  edt = edt.toUpperCase();
@@ -209,11 +209,11 @@ ELconv.selectReferSpec = function( eoj, epc, edt ) {
 //------------------
 // 設置場所
 ELconv.referSpec81 = function(eoj, epc, edt) {
-	  var ret;
+	  let ret;
 	  eoj = eoj.toUpperCase();
 	  epc = epc.toUpperCase();
 	  edt = edt.toUpperCase();
-	  var edtHexArray = ELconv.toHexArray( edt );
+	  let edtHexArray = ELconv.toHexArray( edt );
 	  // 設置場所コード0x01の時は，以降に続く16バイトで緯度・経度・高さの情報とする
 	  // 設置場所コード0x01の時で，上位8バイトが 00,00,1B,00,00,00,00,03の時には下位8バイトは国土地理院の場所情報コードに従う
 	  // 設置場所コード0x02から0x07はfor future reserved
@@ -228,11 +228,11 @@ ELconv.referSpec81 = function(eoj, epc, edt) {
 		    if( edt.substr( 2, 16) == '00001B0000000003' ) {
 			      ret += ':国土地理院場所情報コード:';
 
-			      var latitude = ((edtHexArray[9]& 0x3f)<<17) + ((edtHexArray[10] & 0xff)<<9) + ((edtHexArray[11]& 0xff)<<1) + ((edtHexArray[12] & 0x80)>>7);
-			      var longitude =  ((edtHexArray[12]& 0x7f)<<17) + ((edtHexArray[13] & 0xff)<<9) + ((edtHexArray[14]& 0xff)<<1) + ((edtHexArray[15] & 0x80)>>7);
-			      var floor = ((edtHexArray[15]& 0x7f)<<1) + ((edtHexArray[16]& 0x80)>>7) - 50;
-			      var floor_mid = ((edtHexArray[16]& 0x40)>>6);
-			      var number = (edtHexArray[16]& 0x3f);
+			      let latitude = ((edtHexArray[9]& 0x3f)<<17) + ((edtHexArray[10] & 0xff)<<9) + ((edtHexArray[11]& 0xff)<<1) + ((edtHexArray[12] & 0x80)>>7);
+			      let longitude =  ((edtHexArray[12]& 0x7f)<<17) + ((edtHexArray[13] & 0xff)<<9) + ((edtHexArray[14]& 0xff)<<1) + ((edtHexArray[15] & 0x80)>>7);
+			      let floor = ((edtHexArray[15]& 0x7f)<<1) + ((edtHexArray[16]& 0x80)>>7) - 50;
+			      let floor_mid = ((edtHexArray[16]& 0x40)>>6);
+			      let number = (edtHexArray[16]& 0x3f);
 
 			      ret += 'latitude=' + latitude + ',longitude=' + longitude + ',floor=' + floor;
 			      if( floor_mid = 1 ) {
@@ -253,14 +253,14 @@ ELconv.referSpec81 = function(eoj, epc, edt) {
 
 	  }else{
 		    // 1バイトの時は表を見る
-		    var x = parseInt( edt, 16 );
+		    let x = parseInt( edt, 16 );
 
 		    if( x & 0x80 ) {
 			      ret = 'フリー定義' + (x & 0x7f) + '(' + edt + ')';
 
 		    }else{
-			      var highNumber = ( (x>>3) & 0x0F );
-			      var lowNumber = (x & 0x07);
+			      let highNumber = ( (x>>3) & 0x0F );
+			      let lowNumber = (x & 0x07);
 
 			      switch( highNumber ) {
 			      case 1:
@@ -322,10 +322,14 @@ ELconv.referSpec81 = function(eoj, epc, edt) {
 //------------------
 // Version情報
 ELconv.referSpec82 = function ( eoj, epc, edt) {
-	  var ret = 'Ver. ';
-	  var edtHexArray = ELconv.toHexArray( edt );
+	  let ret = '';
+	  eoj = eoj.toUpperCase();
+	  epc = epc.toUpperCase();
+	  edt = edt.toUpperCase();
+	  let edtHexArray = ELconv.toHexArray( edt );
 
-	  if( eoj == '0EF001' || eoj == '0EF002' ) { // プロファイルオブジェクト方式
+	  if( eoj.substr( 0, 4 ) == '0EF0' ) { // プロファイルオブジェクト方式
+	      ret = 'Ver. ';
 		    ret += edtHexArray[0] + '.' + edtHexArray[1];
 
 		    switch( edtHexArray[2] ) {
@@ -341,11 +345,11 @@ ELconv.referSpec82 = function ( eoj, epc, edt) {
 		    }
 
 	  } else { // 機器オブジェクト
+        ret = 'Release ';
 		    ret += Buffer( [edtHexArray[2]] ).toString('ASCII');
 	  }
 
 	  ret += '(' + edt + ')';
-
 
 	  return ret;
 };
@@ -356,7 +360,7 @@ ELconv.referSpec82 = function ( eoj, epc, edt) {
 ELconv.referSpec8A = function(eoj, epc, edt) {
 	  edt = edt.toUpperCase();
 
-	  var ret = 'Makercode is not found.';
+	  let ret = 'Makercode is not found.';
 
 	  if( ELconv.m_dictMakers[edt] ) {
 		    ret = ELconv.m_dictMakers[edt];
@@ -370,8 +374,8 @@ ELconv.referSpec8A = function(eoj, epc, edt) {
 //------------------
 // プロパティマップ 9D, 9E, 9Fを解析する。下記のフォーム2とセットで
 ELconv.referSpec9D9E9F = function(eoj, epc, edt) {
-	  var ret = '';
-	  var array = ELconv.toHexArray( edt );
+	  let ret = '';
+	  let array = ELconv.toHexArray( edt );
 
 	  if( array.length < 16 ) { // プロパティマップ16バイト未満は記述形式１
 		    array = array.map( function(e) {
@@ -381,7 +385,7 @@ ELconv.referSpec9D9E9F = function(eoj, epc, edt) {
 		    ret += '[' + array.slice(1).join(', ') + ']';
 	  } else {
 		    // 16バイト以上なので記述形式2，EPCのarrayを作り直したら，あと同じ
-		    var array = ELconv.parseMapForm2( array );
+		    array = ELconv.parseMapForm2( array );
 		    array = array.map( function(e) {
 			      return ELconv.toHexString(e);
 		    });
@@ -395,13 +399,13 @@ ELconv.referSpec9D9E9F = function(eoj, epc, edt) {
 // parse Propaty Map Form 2
 // 16以上のプロパティ数の時，記述形式2，出力はForm1にすること
 ELconv.parseMapForm2 = function( array ) {
-	  var ret = [];
-	  var val = 0x80;
+	  let ret = [];
+	  let val = 0x80;
 
 	  // bit loop
-	  for( var bit=0; bit<8; bit += 1 ) {
+	  for( let bit=0; bit<8; bit += 1 ) {
 		    // byte loop
-		    for( var byt=1; byt<17; byt+=1 ) {
+		    for( let byt=1; byt<17; byt+=1 ) {
 			      if( (array[byt] >> bit) & 0x01 ) {
 				        ret.push(val);
 			      }
@@ -422,17 +426,17 @@ ELconv.parseMapForm2 = function( array ) {
 
 // ネットワーク内のEL機器全体情報を更新する
 ELconv.refer = function( facilities, callback ) {
-	  var ret = {'IPs':[]};
+	  let ret = {'IPs':[]};
 
 	  Object.keys( facilities ).forEach( function (ip) { // ip
 		    ret.IPs.push(ip);
 		    ret[ip] = {'EOJs': []}
 		    Object.keys( facilities[ip] ).forEach( function (eoj) { // eoj
-			      var retEoj = ELconv.refEOJ(eoj) + '(' + eoj + ')';
+			      let retEoj = ELconv.refEOJ(eoj) + '(' + eoj + ')';
 			      ret[ip].EOJs.push( retEoj );
 			      ret[ip][retEoj] = { 'EPCs': [] };
 			      Object.keys( facilities[ip][eoj] ).forEach( function (epc) { // epc
-				        var retEpc = ELconv.refEPC(eoj, epc);
+				        let retEpc = ELconv.refEPC(eoj, epc);
 				        ret[ip][retEoj].EPCs.push(retEpc);
 				        ret[ip][retEoj][retEpc] = ELconv.parseEDT( eoj, epc, facilities[ip][eoj][epc] ); //edt
 			      });
@@ -452,11 +456,11 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 	  epc = epc.toUpperCase();
 	  edt = edt.toUpperCase();
 
-	  var contentRule;
-	  var ret;
+	  let contentRule;
+	  let ret;
 
 	  // F0からFFまではuser defined
-	  var upper = epc.substr( 0, 1 );
+	  let upper = epc.substr( 0, 1 );
 	  if( upper == 'F' ) {
 		    ret = 'ユーザ定義領域(' + edt + ')';
 		    return ret;
@@ -468,7 +472,7 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 	  }
 
 	  if( eoj.substr(0, 4) == '0EF0' ) {  // node profile object
-		    var devProps = ELconv.m_dictNod.elObjects['0x'+eoj.substr(0, 4)];
+		    let devProps = ELconv.m_dictNod.elObjects['0x'+eoj.substr(0, 4)];
 		    if( '0x'+epc in devProps.epcs ) { // 指定のEPCはあるか？
 			      contentRule = ELconv.m_dictNod.elObjects['0x'+eoj.substr(0, 4)].epcs['0x'+epc].edt[0].content;
 		    }
@@ -476,14 +480,14 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 
 	  // 各機器固有のEPCか？
 	  if( ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)] ) {  // 指定のEOJはあるか？
-		    var devProps = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)];
+		    let devProps = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)];
 		    if( '0x'+epc in devProps.epcs ) { // 指定のEPCはあるか？
 			      contentRule = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)].epcs['0x'+epc].edt[0].content;
 		    }
 	  }
 
 	  // 1.content typeをみてみる
-	  for (var contentType in contentRule) {
+	  for (let contentType in contentRule) {
 		    switch (contentType){
 		    case 'rawData':				// rawData
 			      switch (contentRule.rawData) {
@@ -501,7 +505,7 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 			      break;
 
 		    case 'numericValue':			// numericValue
-			      var val = 0;
+			      let val = 0;
 			      switch (contentRule.numericValue.integerType) {
 			      case 'Signed':
 				        val = parseInt( edt, 16);  // signedにしたい
@@ -514,12 +518,12 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 				        break;
 			      }
 
-			      var mag = 0; // 倍率を10のN乗表記した指数部。省略可。例: -1(x0.1), 2(x100)
+			      let mag = 0; // 倍率を10のN乗表記した指数部。省略可。例: -1(x0.1), 2(x100)
 			      if( contentRule.numericValue.magnification ) {
 				        mag = parseInt(contentRule.numericValue.magnification);
 			      }
 
-			      var unit = ''; //  単位。省略可。例: '℃'
+			      let unit = ''; //  単位。省略可。例: '℃'
 			      if( contentRule.numericValue.unit ) {
 				        unit = contentRule.numericValue.unit;
 			      }
@@ -528,10 +532,10 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 			      break;
 
 		    case 'level': // Rel.I, クッキングヒータクラスの加熱出力設定には非対応
-			      var val = parseInt( edt, 16);
-			      var min = parseInt( contentRule.level.min, 10);
-			      val -= min + 1;
-			      ret = 'level ' + val + '(' + edt + ')';
+			      let value = parseInt( edt, 16);
+			      let min = parseInt( contentRule.level.min, 10);
+			      value -= min + 1;
+			      ret = 'level ' + value + '(' + edt + ')';
 			      break;
 
 		    case 'customType':  // 時間
@@ -576,23 +580,23 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 	  }
 
 	  // 2.keyValuesを持つときはそちらを優先するが，undefinedの時は値を更新しない
-	  for (var contentType in contentRule) {
+	  for (let contentType in contentRule) {
 		    if( contentType == 'keyValues' ) {
 
 			      if( epc=='D6' ) {			// 3.keyValuesの特殊な形として，自ノードインスタンスリストSを解決する
-				        var count = parseInt( edt.substring( 0, 2) );
+				        let count = parseInt( edt.substring( 0, 2) );
 				        ret = '';
-				        for( var i = 0; i<count; i++ ) {
-					          var st = edt.substr( i*6+2, 6);
+				        for( let i = 0; i<count; i++ ) {
+					          let st = edt.substr( i*6+2, 6);
 					          ret += ELconv.refEOJ(st) + ',';
 				        }
 				        ret = ret.slice(0, -1) + '(' + edt + ')';
 			      }
 			      else if( epc=='D7' ) { // 3.keyValuesの特殊な形として，自ノードクラスリストSを解決する
-				        var count = parseInt( edt.substring( 0, 2) );
+				        let count = parseInt( edt.substring( 0, 2) );
 				        ret = '';
-				        for( var i = 0; i<count; i++ ) {
-					          var st = edt.substr( i*4+2, 4 );
+				        for( let i = 0; i<count; i++ ) {
+					          let st = edt.substr( i*4+2, 4 );
 					          ret += ELconv.refEOJ(st) + ',';
 				        }
 				        ret = ret.slice(0, -1) + '(' + edt + ')';
@@ -609,7 +613,7 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 
 // ESVのマッピング
 ELconv.refESV = function(esv)  {
-    var esv_dict = {
+    let esv_dict = {
         "50":   'SETI_SNA',
         "51":  'SETC_SNA',
         "52":  'GET_SNA',
@@ -633,7 +637,7 @@ ELconv.refESV = function(esv)  {
 // elsを解析する
 ELconv.elsAnarysis = function( els, callback ) {
 
-	  var ret = { 'EHD': 'ECHONET Lite',
+	  let ret = { 'EHD': 'ECHONET Lite',
                 'TID': '??',
                 'SEOJ': '??',
                 'DEOJ': '??',
@@ -649,7 +653,7 @@ ELconv.elsAnarysis = function( els, callback ) {
 
     // EDT だけ少し面倒くさい
     Object.keys( els.DETAILs ).forEach( function (epc) { // epc
-		    var retEpc = ELconv.refEPC( els.DEOJ, epc);
+		    let retEpc = ELconv.refEPC( els.DEOJ, epc);
         if( els.ESV == '62' ) {
 		        ret['EDT'][retEpc] = 'Fixed(00)'; //edt
         }else{
