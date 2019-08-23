@@ -267,6 +267,8 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 
 ## Log
 
+1.0.0 ascii変換のときのNull文字削除に対応した。動作安定してきたのでVer1とする。
+
 0.0.22 getはFixedよりRequestのほうがわかりよい。bug fix: SEOJとDEOJが逆転するときにelsAnarysisが解析失敗することがあった。識別番号はそのままで意味があるものとした。
 
 0.0.21 let対応，unit test，Release対応
