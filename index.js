@@ -11,9 +11,9 @@ const fs = require('fs');
 
 // クラス変数
 let ELconv = {
-    m_dict: {},
-    m_latestSpec: '1.12',
-    m_latestAppendix:'I'
+  m_dict: {},
+  m_latestSpec: '1.12',
+  m_latestAppendix:'I'
 };
 
 
@@ -110,7 +110,7 @@ ELconv.MStoString = function( ms ) {  // Minute(1byte), Second(1byte)
 // rawData
 ELconv.HEXStringtoShiftJIS = function( hexString ) {
 	let array = ELconv.toHexArray( hexString );
-    return ( Encoding.codeToString(Encoding.convert(array)) );
+	return ( Encoding.codeToString(Encoding.convert(array)) );
 };
 
 ELconv.HEXStringtoASCII = function( hexString ) {
@@ -197,7 +197,7 @@ ELconv.selectReferSpec = function( eoj, epc, edt ) {
 		ret = ELconv.referSpec82( eoj, epc, edt);
 	} else if( epc == '83' ) { // 識別番号
 		ret = edt;
-    }else if( epc == '8A' ) { // メーカコード
+	}else if( epc == '8A' ) { // メーカコード
 		ret = ELconv.referSpec8A( eoj, epc, edt);
 	} else if( epc == '9D' || epc == '9E' || epc == '9F' ) {
 		ret = ELconv.referSpec9D9E9F( eoj, epc, edt);
@@ -266,53 +266,53 @@ ELconv.referSpec81 = function(eoj, epc, edt) {
 			let lowNumber = (x & 0x07);
 
 			switch( highNumber ) {
-			case 1:
+			  case 1:
 				ret = '居間、リビング' + lowNumber + '(' + edt + ')';
 
 				break;
-			case 2:
+			  case 2:
 				ret = '食堂、ダイニング' + lowNumber + '(' + edt + ')';
 				break;
-			case 3:
+			  case 3:
 				ret = '台所、キッチン' + lowNumber + '(' + edt + ')';
 				break;
-			case 4:
+			  case 4:
 				ret = '浴槽、バス' + lowNumber + '(' + edt + ')';
 				break;
-			case 5:
+			  case 5:
 				ret = 'トイレ' + lowNumber + '(' + edt + ')';
 				break;
-			case 6:
+			  case 6:
 				ret = '洗面所、脱衣所' + lowNumber + '(' + edt + ')';
 				break;
-			case 7:
+			  case 7:
 				ret = '廊下' + lowNumber + '(' + edt + ')';
 				break;
-			case 8:
+			  case 8:
 				ret = '部屋' + lowNumber + '(' + edt + ')';
 				break;
-			case 9:
+			  case 9:
 				ret = '階段' + lowNumber + '(' + edt + ')';
 				break;
-			case 10:
+			  case 10:
 				ret = '玄関' + lowNumber + '(' + edt + ')';
 				break;
-			case 11:
+			  case 11:
 				ret = '納屋' + lowNumber + '(' + edt + ')';
 				break;
-			case 12:
+			  case 12:
 				ret = '庭、外周' + lowNumber + '(' + edt + ')';
 				break;
-			case 13:
+			  case 13:
 				ret = '車庫' + lowNumber + '(' + edt + ')';
 				break;
-			case 14:
+			  case 14:
 				ret = 'ベランダ、バルコニー' + lowNumber + '(' + edt + ')';
 				break;
-			case 15:
+			  case 15:
 				ret = 'その他' + lowNumber + '(' + edt + ')';
 				break;
-			default:
+			  default:
 				ret = 'referSpec' + '(' + edt + ')';
 				break;
 			}
@@ -332,23 +332,23 @@ ELconv.referSpec82 = function ( eoj, epc, edt) {
 	let edtHexArray = ELconv.toHexArray( edt );
 
 	if( eoj.substr( 0, 4 ) == '0EF0' ) { // プロファイルオブジェクト方式
-	    ret = 'Ver. ';
+		ret = 'Ver. ';
 		ret += edtHexArray[0] + '.' + edtHexArray[1];
 
 		switch( edtHexArray[2] ) {
-		case 1:
+		  case 1:
 			ret += ' 規定電文形式';
 			break;
-		case 2:
+		  case 2:
 			ret += ' 任意電文形式';
 			break;
-		case 3:
+		  case 3:
 			ret += ' 規定・任意電文形式';
 			break;
 		}
 
 	} else { // 機器オブジェクト
-        ret = 'Release ';
+		ret = 'Release ';
 		ret += Buffer( [edtHexArray[2]] ).toString('ASCII');
 	}
 
@@ -417,6 +417,149 @@ ELconv.parseMapForm2 = function( array ) {
 	}
 
 	ret.unshift( ret.length );
+
+	return ret;
+};
+
+
+//////////////////////////////////////////////////////////////////////
+// 分電盤メータリング 0287
+//////////////////////////////////////////////////////////////////////
+ELconv.distributionBoardC2 = function ( eoj, epc, edt) {
+	let ret = 0.001; // default, 0.001kWh
+	switch(edt) {
+	  case '00':
+		ret = 1;
+		break;
+	  case '01':
+		ret = 0.1;
+		break;
+	  case '02':
+		ret = 0.01;
+		break;
+	  case '03':
+		ret = 0.001;
+		break;
+	  case '04':
+		ret = 0.0001;
+		break;
+	  case '0A':
+		ret = 10;
+		break;
+	  case '0B':
+		ret = 100;
+		break;
+	  case '0C':
+		ret = 1000;
+		break;
+	  case '0D':
+		ret = 10000;
+		break;
+	}
+	return ret;
+};
+
+
+// 積算電力量計測チャンネル範囲指定（片方向） B2
+// 瞬時電流計測チャンネル範囲指定（片方向） B4
+// 瞬時電力計測チャンネル範囲指定（片方向） B6
+// 積算電力量計測チャンネル範囲指定（双方向） B9
+// 瞬時電流計測チャンネル範囲指定（双方向） BB
+// 瞬時電力計測チャンネル範囲指定（双方向） BD
+ELconv.distributionBoardB2B4B6B9BBBD = function ( eoj, epc, edt) {
+	return edt.substr(0,2) + 'ch-' + edt.substr(2,4) + 'ch';
+};
+
+// 積算電力量計測値リスト（片方向） B3 単位がC2に依存する
+ELconv.distributionBoardB3 = function ( eoj, epc, edt) {
+	let edtHexArray = ELconv.toHexArray( edt );
+	let begin = edtHexArray[0];
+	let end = edtHexArray[1];
+	let ret = {};
+
+	for(let i=begin; i<=end; i+=1) {
+		let value = edtHexArray[i*2]*256 + edtHexArray[i*2+1];
+		ret['ch'+i] = value + '[xC2 kWh]';  // デフォルトでWhだが，本質的にはC2に依存する
+	}
+
+	return ret;
+};
+
+// 瞬時電流計測値リスト（片方向） B5 0.1A
+ELconv.distributionBoardB5 = function ( eoj, epc, edt) {
+	let edtHexArray = ELconv.toHexArray( edt );
+	let begin = edtHexArray[0];
+	let end = edtHexArray[1];
+	let ret = {};
+
+	for(let i=begin; i<=end; i+=1) {
+		let value = (edtHexArray[i*2]*256 + edtHexArray[i*2+1]) *0.1;
+		ret['ch'+i] = value + '[A]';
+	}
+
+	return ret;
+};
+
+// 瞬時電力計測値リスト（片方向） B7 1W
+ELconv.distributionBoardB7 = function ( eoj, epc, edt) {
+	let edtHexArray = ELconv.toHexArray( edt );
+	let begin = edtHexArray[0];
+	let end = edtHexArray[1];
+	let ret = {};
+
+	for(let i=begin; i<=end; i+=1) {
+		let value = edtHexArray[i*2]*256 + edtHexArray[i*2+1];
+		ret['ch'+i] = value + '[W]';
+	}
+
+	return ret;
+};
+
+// 積算電力量計測値リスト（双方向） BA Wh 単位はC2に従う
+ELconv.distributionBoardBA = function ( eoj, epc, edt) {
+	let edtHexArray = ELconv.toHexArray( edt );
+	let begin = edtHexArray[0];
+	let end = edtHexArray[1];
+	let ret = {};
+
+	for(let i=begin; i<=end; i+=1) {
+		let value_f = edtHexArray[i*2]*256 + edtHexArray[i*2+1];
+		let value_r = edtHexArray[i*2+2]*256 + edtHexArray[i*2+3];
+		ret['ch'+i+'f'] = value_f + '[xC2 kWh]';
+		ret['ch'+i+'r'] = value_r + '[xC2 kWh]';
+	}
+
+	return ret;
+};
+
+// 瞬時電流計測値リスト（双方向） BC 0.1A
+ELconv.distributionBoardBC = function ( eoj, epc, edt) {
+	let edtHexArray = ELconv.toHexArray( edt );
+	let begin = edtHexArray[0];
+	let end = edtHexArray[1];
+	let ret = {};
+
+	for(let i=begin; i<=end; i+=1) {
+		let value_r = (edtHexArray[i*2]*256 + edtHexArray[i*2+1]) * 0.1;
+		let value_t = (edtHexArray[i*2+2]*256 + edtHexArray[i*2+3]) *0.1;
+		ret['ch'+i+'R'] = value_r + '[A]';
+		ret['ch'+i+'T'] = value_t + '[A]';
+	}
+
+	return ret;
+};
+
+// 瞬時電力計測値リスト（双方向） BE W
+ELconv.distributionBoardBC = function ( eoj, epc, edt) {
+	let edtHexArray = ELconv.toHexArray( edt );
+	let begin = edtHexArray[0];
+	let end = edtHexArray[1];
+	let ret = {};
+
+	for(let i=begin; i<=end; i+=1) {
+		let value = edtHexArray[i*2]*256 + edtHexArray[i*2+1];
+		ret['ch'+i] = value_r + '[W]';
+	}
 
 	return ret;
 };
@@ -492,30 +635,32 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 	// 1.content typeをみてみる
 	for (let contentType in contentRule) {
 		switch (contentType){
-		case 'rawData':				// rawData
+		  case 'rawData':				// rawData
 			switch (contentRule.rawData) {
-			case 'ASCII':
+			  case 'ASCII':
 				ret = ELconv.HEXStringtoASCII(edt) + '(ascii:' + edt + ')';
 				break;
-			case 'ShiftJIS':
-                ret = ELconv.HEXStringtoShiftJIS(edt) + '(ShiftJIS:' + edt + ')';
-                break;
-			case 'binary':
-			default:
+			  case 'ShiftJIS':
+				ret = ELconv.HEXStringtoShiftJIS(edt) + '(ShiftJIS:' + edt + ')';
+				break;
+			  case 'binary':
+			  default:
 				ret = contentRule.rawData + '(' + edt + ')';
 				break;
 			}
 			break;
 
-		case 'numericValue':			// numericValue
+		  case 'numericValue':			// numericValue
 			let val = 0;
 			switch (contentRule.numericValue.integerType) {
-			case 'Signed':
+			  case 'Signed':
 				val = parseInt( edt, 16);  // signedにしたい
 				if (val > 127) { val = val - 256 }
 				break;
-			case 'Unsigned':
-			default:
+			  case 'Unsigned':
+				val = parseInt( edt, 16);
+				break;
+			  default:
 				// エラー返すのどうしたらいいかわからん。
 				val = parseInt( edt, 16);
 				break;
@@ -534,41 +679,41 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 			ret = val * Math.pow(10, mag) + unit + '(' + edt + ')';
 			break;
 
-		case 'level': // Rel.I, クッキングヒータクラスの加熱出力設定には非対応
+		  case 'level': // Rel.I, クッキングヒータクラスの加熱出力設定には非対応
 			let value = parseInt( edt, 16);
 			let min = parseInt( contentRule.level.min, 10);
 			value -= min + 1;
 			ret = 'level ' + value + '(' + edt + ')';
 			break;
 
-		case 'customType':  // 時間
+		  case 'customType':  // 時間
 			switch( contentRule.customType ) {
-			case 'YYM':  // Year(2byte), Month(1byte)
+			  case 'YYM':  // Year(2byte), Month(1byte)
 				ret = ELconv.MStoString( edt ) + '(' + edt + ')';
 				break;
-			case 'YYMD': // Year(2byte), Month(1byte), Day(1byte)
+			  case 'YYMD': // Year(2byte), Month(1byte), Day(1byte)
 				ret = ELconv.YYMDtoString( edt ) + '(' + edt + ')';
 				break;
-			case 'HM':   // Hour(1byte), Minute(1byte)
+			  case 'HM':   // Hour(1byte), Minute(1byte)
 				ret = ELconv.HMtoString( edt ) + '(' + edt + ')';
 				break;
-			case 'HMS':  // Hour(1byte), Minute(1byte), Second(1byte)
+			  case 'HMS':  // Hour(1byte), Minute(1byte), Second(1byte)
 				ret = ELconv.HMStoString( edt ) + '(' + edt + ')';
 				break;
-			case 'HMF':  // Hour(1byte), Minute(1byte), Frame(1byte)
+			  case 'HMF':  // Hour(1byte), Minute(1byte), Frame(1byte)
 				ret = ELconv.HMFtoString( edt ) + '(' + edt + ')';
 				break;
-			case 'MS':   // Minute(1byte), Second(1byte)
+			  case 'MS':   // Minute(1byte), Second(1byte)
 				ret = ELconv.MStoString( edt ) + '(' + edt + ')';
 				break;
 			}
 			break;
 
-		case 'bitmap': // bitmap方式
+		  case 'bitmap': // bitmap方式
 			ret = ELconv.BITMAPtoString( edt, contentRule.bitmap ) + '(' + edt + ')';
 			break;
 
-		case 'others': // 各EPC個別対応しかできないかも？
+		  case 'others': // 各EPC個別対応しかできないかも？
 			if( contentRule.others == 'referSpec' ) {
 				ret = ELconv.selectReferSpec( eoj, epc, edt);
 			} else {
@@ -576,7 +721,7 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 			}
 			break;
 
-		default:
+		  default:
 			ret = contentType + '(' + edt + ')';
 			break;
 		}
@@ -611,29 +756,66 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 		}
 	}
 
+
+	// その他，特殊な形
+	// 分電盤メータリング 0287
+	if( eoj.substr(0,4) == '0287' ) {
+		switch( epc ) {
+		  case 'C2':
+			ret = ELconv.distributionBoardC2( eoj, epc, edt);
+			break;
+		  case 'B2':
+		  case 'B4':
+		  case 'B6':
+		  case 'B9':
+		  case 'BB':
+		  case 'BD':
+			ret = ELconv.distributionBoardB2B4B6B9BBBD( eoj, epc, edt);
+			break;
+		  case 'B3':
+			ret = ELconv.distributionBoardB3( eoj, epc, edt);
+			break;
+		  case 'B5':
+			ret = ELconv.distributionBoardB5( eoj, epc, edt);
+			break;
+		  case 'B7':
+			ret = ELconv.distributionBoardB7( eoj, epc, edt);
+			break;
+		  case 'BA':
+			ret = ELconv.distributionBoardBA( eoj, epc, edt);
+			break;
+		  case 'BC':
+			ret = ELconv.distributionBoardBC( eoj, epc, edt);
+			break;
+		  case 'BE':
+			ret = ELconv.distributionBoardBE( eoj, epc, edt);
+			break;
+		}
+	}
+
 	return ret;
 };
 
 // ESVのマッピング
 ELconv.refESV = function(esv)  {
-    let esv_dict = {
-        "50":   'SETI_SNA',
-        "51":  'SETC_SNA',
-        "52":  'GET_SNA',
-        "53":  'INF_SNA',
-        "5e": 'SETGET_SNA',
-        "60": 'SETI',
-        "61": 'SETC',
-        "62": 'GET',
-        "63": 'INF_REQ',
-        "6e": 'SETGET',
-        "71": 'SET_RES',
-        "72": 'GET_RES',
-        "73": 'INF',
-        "74": 'INFC',
-        "7a": 'INFC_RES',
-        "7e": 'SETGET_RES' };
-    return  ( esv_dict[esv] );
+	let esv_dict = {
+		"50":   'SETI_SNA',
+		"51":  'SETC_SNA',
+		"52":  'GET_SNA',
+		"53":  'INF_SNA',
+		"5e": 'SETGET_SNA',
+		"60": 'SETI',
+		"61": 'SETC',
+		"62": 'GET',
+		"63": 'INF_REQ',
+		"6e": 'SETGET',
+		"71": 'SET_RES',
+		"72": 'GET_RES',
+		"73": 'INF',
+		"74": 'INFC',
+		"7a": 'INFC_RES',
+		"7e": 'SETGET_RES' };
+	return  ( esv_dict[esv] );
 };
 
 
@@ -641,57 +823,57 @@ ELconv.refESV = function(esv)  {
 ELconv.elsAnarysis = function( els, callback ) {
 
 	let ret = { 'EHD': 'ECHONET Lite',
-                'TID': '??',
-                'SEOJ': '??',
-                'DEOJ': '??',
-                'ESV': '??',
-                'OPC': '??',
-                'EDT': {} };
+		'TID': '??',
+		'SEOJ': '??',
+		'DEOJ': '??',
+		'ESV': '??',
+		'OPC': '??',
+		'EDT': {} };
 
-    ret.TID = els.TID;
-    ret.SEOJ = ELconv.refEOJ( els.SEOJ );
-    ret.DEOJ = ELconv.refEOJ( els.DEOJ );
-    ret.ESV = ELconv.refESV(els.ESV);
-    ret.OPC = els.OPC;
+	ret.TID = els.TID;
+	ret.SEOJ = ELconv.refEOJ( els.SEOJ );
+	ret.DEOJ = ELconv.refEOJ( els.DEOJ );
+	ret.ESV = ELconv.refESV(els.ESV);
+	ret.OPC = els.OPC;
 
-    // EDT だけ少し面倒くさい
-    Object.keys( els.DETAILs ).forEach( function (epc) { // epc
+	// EDT だけ少し面倒くさい
+	Object.keys( els.DETAILs ).forEach( function (epc) { // epc
 		let retEpc;
-        switch( els.ESV  ) {
-        case '60': // SETIはDEOJを参照
-        case '61': // SETC
-		    retEpc = ELconv.refEPC( els.DEOJ, epc);
-		    ret['EDT'][retEpc] = ELconv.parseEDT( els.DEOJ, epc, els.DETAILs[epc] ); //edt
-            break;
+		switch( els.ESV  ) {
+		  case '60': // SETIはDEOJを参照
+		  case '61': // SETC
+			retEpc = ELconv.refEPC( els.DEOJ, epc);
+			ret['EDT'][retEpc] = ELconv.parseEDT( els.DEOJ, epc, els.DETAILs[epc] ); //edt
+			break;
 
-        case '62': // GETはEDT=00
-        case '63': // INF_REQ
-        case '6e':
-		    retEpc = ELconv.refEPC( els.DEOJ, epc);
-		    ret['EDT'][retEpc] = 'Request(00)'; //edt
-            break;
+		  case '62': // GETはEDT=00
+		  case '63': // INF_REQ
+		  case '6e':
+			retEpc = ELconv.refEPC( els.DEOJ, epc);
+			ret['EDT'][retEpc] = 'Request(00)'; //edt
+			break;
 
-            // returnはSEOJを参照
-        case '50': // seti_sna
-        case '51': // setc_sna
-        case '52': // get_sna
-        case '53': // inf_sna
-        case '5e': // setget_sna
-        case '71': // set_res
-        case '72': // get_res
-        case '73': // inf
-        case '74': // infc
-        case '7a': // infc_res
-        case '7e': // setget_res
-		    retEpc = ELconv.refEPC( els.SEOJ, epc);
-		    ret['EDT'][retEpc] = ELconv.parseEDT( els.SEOJ, epc, els.DETAILs[epc] ); //edt
-            break;
+			// returnはSEOJを参照
+		  case '50': // seti_sna
+		  case '51': // setc_sna
+		  case '52': // get_sna
+		  case '53': // inf_sna
+		  case '5e': // setget_sna
+		  case '71': // set_res
+		  case '72': // get_res
+		  case '73': // inf
+		  case '74': // infc
+		  case '7a': // infc_res
+		  case '7e': // setget_res
+			retEpc = ELconv.refEPC( els.SEOJ, epc);
+			ret['EDT'][retEpc] = ELconv.parseEDT( els.SEOJ, epc, els.DETAILs[epc] ); //edt
+			break;
 
-        default:
-		    retEpc = ELconv.refEPC( els.DEOJ, epc);
-		    ret['EDT'][retEpc] = 'unknown(' + els.DETAILs[epc] + ')'; //edt
-            break;
-        }
+		  default:
+			retEpc = ELconv.refEPC( els.DEOJ, epc);
+			ret['EDT'][retEpc] = 'unknown(' + els.DETAILs[epc] + ')'; //edt
+			break;
+		}
 	});
 
 	callback( ret );

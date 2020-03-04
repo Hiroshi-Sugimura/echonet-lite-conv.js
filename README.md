@@ -267,51 +267,30 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 
 ## Log
 
-1.0.0 ascii変換のときのNull文字削除に対応した。動作安定してきたのでVer1とする。
-
-0.0.22 getはFixedよりRequestのほうがわかりよい。bug fix: SEOJとDEOJが逆転するときにelsAnarysisが解析失敗することがあった。識別番号はそのままで意味があるものとした。
-
-0.0.21 let対応，unit test，Release対応
-
-0.0.20 GETはEDT00固定なので，それに対応
-
-0.0.19 refESVでESVがコンソールにでるバグを修正
-
-0.0.18 elsの解析に対応
-
-0.0.17 'use strict'対応，rawData:ShiftJIS対応（オーブンレンジの0xEAくらいしかないのだが）
-
-0.0.16 README.md修正
-
-0.0.15 Version情報に対応した．すごく古いバージョンにはうまく対応できていないかもしれない．
-
-0.0.14 状変アナウンスプロパティマップ(9D), Setプロパティマップ(9E), Getプロパティマップ(9F)に対応した．
-
-0.0.13 メーカコードに対応した．
-
-0.0.12 設置場所の国土地理院場所情報コード方式は対応した．緯度経度高さ方式の16バイトの定義が不明なので誰か教えて．
-
-0.0.11 設置場所の1バイト方式に対応した．緯度経度高さ方式と国土地理院場所情報コード方式はめんどくさい．
-
-0.0.10 bitmap方式対応した．対応していないデータタイプはあと2種類（rawData:ShiftJIS，others）あるけどきびしい．よく考えるとRepeatCount対応していないかも．
-
-0.0.9 customTypeタイプとrawData.ASCIIに対応した．対応していないデータタイプ（bitmap，rawData:ShiftJIS，others）をもう少しわかりやすく表現してみた．
-
-0.0.8 levelタイプに対応した．ただし，クッキングヒータクラスの加熱出力設定には非対応．対応していないデータタイプ（bitmap，rawData，customType，others）をもう少しわかりやすく表現してみた．
-
-0.0.7 辞書ファイルをVer 1.12のNode ProfileとRelease Iに対応した．内部的にはRelease Hも持っている．その関連で辞書の位置が変わった．EDTを少し解釈するようになった．解釈できないEDTはcontentTypeを付けることにした．EPCのF0からFFまでをユーザ定義領域と解釈結果を付けることにした．
-
-0.0.6 辞書ファイルをVer 1.11eのNode ProfileとRelease Gに対応した．日本語版になった．英語版辞書も欲しい．
-
-0.0.5 辞書ファイルをVer 1.11eのNode ProfileとRelease CのObject super classにかなり対応した．
-
-0.0.4 攻略情報が，「ECHONET Lite 攻略情報」だったので「ECHONET Lite Converter 攻略情報」にした．READMEを適当に英語追加した．
-
-0.0.3 辞書ファイルをRelease Cにかなり対応した．これからすべてのReleaseバージョンにどう対応するかが検討事項する．
-
-0.0.2 README.mdをそこそこきれいにした．攻略情報と辞書ファイルのことも追記した．
-
-0.0.1 枠組み公開した．
+- 1.0.1 分電盤メータリングに少し対応した。
+- 1.0.0 ascii変換のときのNull文字削除に対応した。動作安定してきたのでVer1とする。
+- 0.0.22 getはFixedよりRequestのほうがわかりよい。bug fix: SEOJとDEOJが逆転するときにelsAnarysisが解析失敗することがあった。識別番号はそのままで意味があるものとした。
+- 0.0.21 let対応，unit test，Release対応
+- 0.0.20 GETはEDT00固定なので，それに対応
+- 0.0.19 refESVでESVがコンソールにでるバグを修正
+- 0.0.18 elsの解析に対応
+- 0.0.17 'use strict'対応，rawData:ShiftJIS対応（オーブンレンジの0xEAくらいしかないのだが）
+- 0.0.16 README.md修正
+- 0.0.15 Version情報に対応した．すごく古いバージョンにはうまく対応できていないかもしれない．
+- 0.0.14 状変アナウンスプロパティマップ(9D), Setプロパティマップ(9E), Getプロパティマップ(9F)に対応した．
+- 0.0.13 メーカコードに対応した．
+- 0.0.12 設置場所の国土地理院場所情報コード方式は対応した．緯度経度高さ方式の16バイトの定義が不明なので誰か教えて．
+- 0.0.11 設置場所の1バイト方式に対応した．緯度経度高さ方式と国土地理院場所情報コード方式はめんどくさい．
+- 0.0.10 bitmap方式対応した．対応していないデータタイプはあと2種類（rawData:ShiftJIS，others）あるけどきびしい．よく考えるとRepeatCount対応していないかも．
+- 0.0.9 customTypeタイプとrawData.ASCIIに対応した．対応していないデータタイプ（bitmap，rawData:ShiftJIS，others）をもう少しわかりやすく表現してみた．
+- 0.0.8 levelタイプに対応した．ただし，クッキングヒータクラスの加熱出力設定には非対応．対応していないデータタイプ（bitmap，rawData，customType，others）をもう少しわかりやすく表現してみた．
+- 0.0.7 辞書ファイルをVer 1.12のNode ProfileとRelease Iに対応した．内部的にはRelease Hも持っている．その関連で辞書の位置が変わった．EDTを少し解釈するようになった．解釈できないEDTはcontentTypeを付けることにした．EPCのF0からFFまでをユーザ定義領域と解釈結果を付けることにした．
+- 0.0.6 辞書ファイルをVer 1.11eのNode ProfileとRelease Gに対応した．日本語版になった．英語版辞書も欲しい．
+- 0.0.5 辞書ファイルをVer 1.11eのNode ProfileとRelease CのObject super classにかなり対応した．
+- 0.0.4 攻略情報が，「ECHONET Lite 攻略情報」だったので「ECHONET Lite Converter 攻略情報」にした．READMEを適当に英語追加した．
+- 0.0.3 辞書ファイルをRelease Cにかなり対応した．これからすべてのReleaseバージョンにどう対応するかが検討事項する．
+- 0.0.2 README.mdをそこそこきれいにした．攻略情報と辞書ファイルのことも追記した．
+- 0.0.1 枠組み公開した．
 
 
 ## Known Issues（既知の問題）
