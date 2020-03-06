@@ -550,7 +550,7 @@ ELconv.distributionBoardBC = function ( eoj, epc, edt) {
 };
 
 // 瞬時電力計測値リスト（双方向） BE W
-ELconv.distributionBoardBC = function ( eoj, epc, edt) {
+ELconv.distributionBoardBE = function ( eoj, epc, edt) {
 	let edtHexArray = ELconv.toHexArray( edt );
 	let begin = edtHexArray[0];
 	let end = edtHexArray[1];
@@ -558,7 +558,7 @@ ELconv.distributionBoardBC = function ( eoj, epc, edt) {
 
 	for(let i=begin; i<=end; i+=1) {
 		let value = edtHexArray[i*2]*256 + edtHexArray[i*2+1];
-		ret['ch'+i] = value_r + '[W]';
+		ret['ch'+i] = value + '[W]';
 	}
 
 	return ret;
