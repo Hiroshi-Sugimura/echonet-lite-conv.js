@@ -482,7 +482,7 @@ ELconv.distributionBoardB3 = function ( eoj, epc, edt) {
 		ret['ch'+i] = value + '[xC2 kWh]';  // デフォルトでWhだが，本質的にはC2に依存する
 	}
 
-	return ret;
+	return JSON.stringify(ret) + '(' + edt +')';
 };
 
 // 瞬時電流計測値リスト（片方向） B5 0.1A
@@ -497,7 +497,7 @@ ELconv.distributionBoardB5 = function ( eoj, epc, edt) {
 		ret['ch'+i] = value + '[A]';
 	}
 
-	return ret;
+	return JSON.stringify(ret) + '(' + edt +')';
 };
 
 // 瞬時電力計測値リスト（片方向） B7 1W
@@ -509,10 +509,10 @@ ELconv.distributionBoardB7 = function ( eoj, epc, edt) {
 
 	for(let i=begin; i<=end; i+=1) {
 		let value = edtHexArray[i*2]*256 + edtHexArray[i*2+1];
-		ret['ch'+i] = value + '[W]';
+		ret[ 'ch'+i ] = value + '[W]';
 	}
 
-	return ret;
+	return JSON.stringify(ret) + '(' + edt +')';
 };
 
 // 積算電力量計測値リスト（双方向） BA Wh 単位はC2に従う
@@ -529,7 +529,7 @@ ELconv.distributionBoardBA = function ( eoj, epc, edt) {
 		ret['ch'+i+'r'] = value_r + '[xC2 kWh]';
 	}
 
-	return ret;
+	return JSON.stringify(ret) + '(' + edt +')';
 };
 
 // 瞬時電流計測値リスト（双方向） BC 0.1A
@@ -546,7 +546,7 @@ ELconv.distributionBoardBC = function ( eoj, epc, edt) {
 		ret['ch'+i+'T'] = value_t + '[A]';
 	}
 
-	return ret;
+	return JSON.stringify(ret) + '(' + edt +')';
 };
 
 // 瞬時電力計測値リスト（双方向） BE W
@@ -561,7 +561,7 @@ ELconv.distributionBoardBE = function ( eoj, epc, edt) {
 		ret['ch'+i] = value + '[W]';
 	}
 
-	return ret;
+	return JSON.stringify(ret) + '(' + edt +')';
 };
 
 

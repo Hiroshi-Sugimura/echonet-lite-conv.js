@@ -267,6 +267,8 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 
 ## Log
 
+- 1.0.3 分電盤メータリングのバグ改修。
+- 1.0.2 分電盤メータリングBEのバグ改修。
 - 1.0.1 分電盤メータリングに少し対応した。
 - 1.0.0 ascii変換のときのNull文字削除に対応した。動作安定してきたのでVer1とする。
 - 0.0.22 getはFixedよりRequestのほうがわかりよい。bug fix: SEOJとDEOJが逆転するときにelsAnarysisが解析失敗することがあった。識別番号はそのままで意味があるものとした。
