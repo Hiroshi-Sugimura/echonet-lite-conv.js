@@ -267,6 +267,7 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 
 ## Log
 
+- 1.1.0 1Byte単位でスペースいれる。
 - 1.0.3 分電盤メータリングのバグ改修。
 - 1.0.2 分電盤メータリングBEのバグ改修。
 - 1.0.1 分電盤メータリングに少し対応した。
