@@ -581,6 +581,24 @@ ELconv.distributionBoardBE = function ( eoj, epc, edt) {
 };
 
 
+// 低圧スマート電力メータ
+// 瞬時電流計測値 E8
+ELconv.lowVoltageSmartElectricEnergyMeterE8 = function (eoj, epc, edt) {
+	let rPhase = edt.substr(0,4);
+	let lPhase = edt.substr(4,4);
+	let ret = {};
+
+	ret['RPhase'] = Int16Array.from([parseInt(rPhase,16)])[0] * 0.1 + '[A]';
+
+	if( lPhase === '7ffe' ) {
+		ret['LPhase'] = 'two-wire';
+	}else{
+		ret['LPhase'] = Int16Array.from([parseInt(lPhase, 16)])[0] * 0.1 + '[A]';
+	}
+
+	return JSON.stringify(ret) + '(' + ELconv.ByteStringSeparater(edt) +')';
+};
+
 
 //////////////////////////////////////////////////////////////////////
 // 変換系
@@ -805,6 +823,15 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 			break;
 		  case 'BE':
 			ret = ELconv.distributionBoardBE( eoj, epc, edt);
+			break;
+		}
+	}
+
+	// 低圧スマート電力量メータ01(028801)
+	if( eoj.substr(0,4) === '0288' ) {
+		switch( epc ) {
+		case 'E8':
+			ret = ELconv.lowVoltageSmartElectricEnergyMeterE8( eoj, epc, edt );
 			break;
 		}
 	}
