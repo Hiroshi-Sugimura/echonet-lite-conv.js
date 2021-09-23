@@ -585,15 +585,15 @@ ELconv.distributionBoardBE = function ( eoj, epc, edt) {
 // 瞬時電流計測値 E8
 ELconv.lowVoltageSmartElectricEnergyMeterE8 = function (eoj, epc, edt) {
 	let rPhase = edt.substr(0,4);
-	let lPhase = edt.substr(4,4);
+	let tPhase = edt.substr(4,4);
 	let ret = {};
 
 	ret['RPhase'] = Int16Array.from([parseInt(rPhase,16)])[0] * 0.1 + '[A]';
 
-	if( lPhase === '7ffe' ) {
-		ret['LPhase'] = 'two-wire';
+	if( tPhase === '7FFE' ) {
+		ret['TPhase'] = 'two-wire';
 	}else{
-		ret['LPhase'] = Int16Array.from([parseInt(lPhase, 16)])[0] * 0.1 + '[A]';
+		ret['TPhase'] = Int16Array.from([parseInt(tPhase, 16)])[0] * 0.1 + '[A]';
 	}
 
 	return JSON.stringify(ret) + '(' + ELconv.ByteStringSeparater(edt) +')';
