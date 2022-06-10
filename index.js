@@ -13,7 +13,8 @@ const fs = require('fs');
 let ELconv = {
   m_dict: {},
   m_latestSpec: '1.12',
-  m_latestAppendix:'I'
+  m_latestAppendix:'I',
+  m_initialized: false
 };
 
 
@@ -864,6 +865,11 @@ ELconv.refESV = function(esv)  {
 
 // elsを解析する
 ELconv.elsAnarysis = function( els, callback ) {
+
+	// 初期化していなかったら初期化する
+	if( !ELconv.m_initialized ) {
+		ELconv.initialize();
+	}
 
 	let ret = { 'EHD': 'ECHONET Lite',
 		'TID': '??',
