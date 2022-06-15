@@ -581,8 +581,9 @@ ELconv.distributionBoardBE = function ( eoj, epc, edt) {
 	return JSON.stringify(ret) + '(' + ELconv.ByteStringSeparater(edt) +')';
 };
 
-
-// 低圧スマート電力メータ
+//////////////////////////////////////////////////////////////////////
+// 低圧スマート電力量メータクラス 0288
+//////////////////////////////////////////////////////////////////////
 // 瞬時電流計測値 E8
 ELconv.lowVoltageSmartElectricEnergyMeterE8 = function (eoj, epc, edt) {
 	let rPhase = edt.substr(0,4);
@@ -600,6 +601,23 @@ ELconv.lowVoltageSmartElectricEnergyMeterE8 = function (eoj, epc, edt) {
 	return JSON.stringify(ret) + '(' + ELconv.ByteStringSeparater(edt) +')';
 };
 
+// 定時積算電力量計測値（正方向計測値＝EA、逆方法計測値＝EB）
+ELconv.lowVoltageSmartElectricEnergyMeterEAEB = function (eoj, epc, edt) {
+	// 12 34 56 78 90 12 34 56
+	// 07 E6 06 0F 11 1E 00 00 0B 94 60
+	// yy yy mm dd hh mm ss
+	// 2022  6  15 11 30 00 [kWh      ]
+	// edt = "07E6060F111E0005F5E0FF";  //05F5E0FFがMax
+	let ret;
+	let yymd = ELconv.YYMDtoString( edt.substr(0,8) );
+	let hms  = ELconv.HMStoString( edt.substr(8,6) );
+	console.log( edt.substr(14,20) );
+	let pow  = parseInt( edt.substr(14,20), 16);
+
+	ret = yymd + ' ' + hms + ',' + pow + '[xE1 kWh]';
+
+	return ret + '(' + ELconv.ByteStringSeparater(edt) +')';
+};
 
 //////////////////////////////////////////////////////////////////////
 // 変換系
@@ -831,8 +849,12 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 	// 低圧スマート電力量メータ01(028801)
 	if( eoj.substr(0,4) === '0288' ) {
 		switch( epc ) {
-		case 'E8':
+		  case 'E8':
 			ret = ELconv.lowVoltageSmartElectricEnergyMeterE8( eoj, epc, edt );
+			break;
+		  case 'EA':
+		  case 'EB':
+			ret = ELconv.lowVoltageSmartElectricEnergyMeterEAEB( eoj, epc, edt );
 			break;
 		}
 	}
