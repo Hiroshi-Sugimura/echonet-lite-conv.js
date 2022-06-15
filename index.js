@@ -611,7 +611,7 @@ ELconv.lowVoltageSmartElectricEnergyMeterEAEB = function (eoj, epc, edt) {
 	let ret;
 	let yymd = ELconv.YYMDtoString( edt.substr(0,8) );
 	let hms  = ELconv.HMStoString( edt.substr(8,6) );
-	console.log( edt.substr(14,20) );
+	// console.log( edt.substr(14,20) );
 	let pow  = parseInt( edt.substr(14,20), 16);
 
 	ret = yymd + ' ' + hms + ',' + pow + '[xE1 kWh]';

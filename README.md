@@ -267,6 +267,7 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 
 ## Log
 
+- 1.5.1 いらないログ消した
 - 1.5.0 低圧スマメに少し対応
 - 1.4.0 初期化していなかったら自動的に初期化する
 - 1.3.0 低圧スマメちょっと修正
