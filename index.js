@@ -897,7 +897,7 @@ ELconv.EDTconvination = function ( eoj, epcs ) {
 			let dt = new Date( yymd.split('.')[0], yymd.split('.')[1]-1, yymd.split('.')[2],
 							   hms.split('.')[0], hms.split('.')[1], hms.split('.')[2]);
 
-			ret['定時積算電力量計測値正方向'] = {'日時': dt, '計測値[kWh]':pow};
+			ret['定時積算電力量計測値正方向'] = {'日時': dt.toISOString(), '計測値[kWh]':pow};
 		}
 		if( epcs['eb'] && epcs['e1'] ) {
 			let contentRule = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)].epcs['0xE1'].edt[0].content;
@@ -909,8 +909,10 @@ ELconv.EDTconvination = function ( eoj, epcs ) {
 			let dt = new Date( yymd.split('.')[0], yymd.split('.')[1]-1, yymd.split('.')[2],
 							   hms.split('.')[0], hms.split('.')[1], hms.split('.')[2]);
 
-			ret['定時積算電力量計測値逆方向'] = {'日時': dt, '計測値[kWh]':pow};
+			ret['定時積算電力量計測値逆方向'] = {'日時': dt.toISOString(), '計測値[kWh]':pow};
 		}
+		// if( epcs['e7'] ) {  // 瞬時電力計測値(E7)も使いやすくしたい
+		// }
 
 	}else{
 		return null;
