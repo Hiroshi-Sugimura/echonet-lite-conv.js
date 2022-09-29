@@ -620,6 +620,45 @@ ELconv.lowVoltageSmartElectricEnergyMeterEAEB = function (eoj, epc, edt) {
 };
 
 //////////////////////////////////////////////////////////////////////
+// スマート電力量サブメータクラス 028D
+//////////////////////////////////////////////////////////////////////
+// 瞬時電流計測値 E8
+ELconv.smartElectricEnergySubMeterE8 = function (eoj, epc, edt) {
+	let rPhase = edt.substr(0,4);
+	let tPhase = edt.substr(4,4);
+	let ret = {};
+
+	ret['RPhase'] = Int16Array.from([parseInt(rPhase,16)])[0] * 0.1 + '[A]';
+
+	if( tPhase === '7FFE' ) {
+		ret['TPhase'] = 'two-wire';
+	}else{
+		ret['TPhase'] = Int16Array.from([parseInt(tPhase, 16)])[0] * 0.1 + '[A]';
+	}
+
+	return JSON.stringify(ret) + '(' + ELconv.ByteStringSeparater(edt) +')';
+};
+
+// 瞬時電圧計測値 E9
+ELconv.smartElectricEnergySubMeterE9 = function (eoj, epc, edt) {
+	let rPhase = edt.substr(0,4);
+	let tPhase = edt.substr(4,4);
+	let ret = {};
+
+	ret['R-S'] = Int16Array.from([parseInt(rPhase,16)])[0] * 0.1 + '[V]';
+
+	if( tPhase === '7FFE' ) {
+		ret['S-T'] = 'two-wire';
+	}else{
+		ret['S-T'] = Int16Array.from([parseInt(tPhase, 16)])[0] * 0.1 + '[V]';
+	}
+
+	return JSON.stringify(ret) + '(' + ELconv.ByteStringSeparater(edt) +')';
+};
+
+
+
+//////////////////////////////////////////////////////////////////////
 // 変換系
 //////////////////////////////////////////////////////////////////////
 
@@ -864,6 +903,21 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 			break;
 		}
 	}
+
+	// 低圧スマート電力量メータ01(028801)
+	if( eoj.substr(0,4) === '028D' ) {
+		switch( epc ) {
+			case 'E8':
+			ret = ELconv.smartElectricEnergySubMeterE8( eoj, epc, edt );
+			break;
+			case 'E9':
+			ret = ELconv.smartElectricEnergySubMeterE9( eoj, epc, edt );
+			break;
+		}
+	}
+
+
+
 
 	return ret;
 };
