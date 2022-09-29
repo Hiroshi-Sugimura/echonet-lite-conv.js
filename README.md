@@ -267,7 +267,8 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 
 ## Log
 
-- 1.5.5 スマート電力量サブメータ追加, もしかしたらEPC間違っているかもしれない
+- 1.6.0 スマート電力量サブメータ、複雑なEPCの解釈を追加
+- 1.5.5 スマート電力量サブメータ追加、もしかしたらEPC間違っているかもしれない
 - 1.5.4 電気掃除機追加
 - 1.5.3 低圧スマメ、時間をISO Stringにした
 - 1.5.2 低圧スマメ、複雑なEPCの解釈を追加

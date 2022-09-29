@@ -656,6 +656,23 @@ ELconv.smartElectricEnergySubMeterE9 = function (eoj, epc, edt) {
 	return JSON.stringify(ret) + '(' + ELconv.ByteStringSeparater(edt) +')';
 };
 
+// 定時積算電力量計測値（正方向計測値＝EA、逆方法計測値＝EB）
+ELconv.smartElectricEnergySubMeterEAEB = function (eoj, epc, edt) {
+	// 12 34 56 78 90 12 34 56
+	// 07 E6 06 0F 11 1E 00 00 0B 94 60
+	// yy yy mm dd hh mm ss
+	// 2022  6  15 11 30 00 [kWh      ]
+	// edt = "07E6060F111E0005F5E0FF";  //05F5E0FFがMax
+	let ret;
+	let yymd = ELconv.YYMDtoString( edt.substr(0,8) );
+	let hms  = ELconv.HMStoString( edt.substr(8,6) );
+	// console.log( edt.substr(14,20) );
+	let pow  = parseInt( edt.substr(14,20), 16);
+
+	ret = yymd + ' ' + hms + ',' + pow + '[xD3 kWh]';
+
+	return ret + '(' + ELconv.ByteStringSeparater(edt) +')';
+};
 
 
 //////////////////////////////////////////////////////////////////////
@@ -913,10 +930,12 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 			case 'E9':
 			ret = ELconv.smartElectricEnergySubMeterE9( eoj, epc, edt );
 			break;
+			case 'EA':
+			case 'EB':
+			ret = ELconv.smartElectricEnergySubMeterEAEB( eoj, epc, edt);
+			break;
 		}
 	}
-
-
 
 
 	return ret;
@@ -926,28 +945,31 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 // 複数のEOJが関連して意味をなすもの
 // かなり例外的に処理がある
 ELconv.EDTconvination = function ( eoj, epcs ) {
+	// console.log('# ELconv.EDTconvination', eoj, epcs);
+	eoj = eoj.toUpperCase();
+
 	let ret = {};
-	// 低圧スマート電力量メータ(028801)
+	// 低圧スマート電力量メータ(0288)
 	if( eoj.substr(0,4) === '0288' ) {
 		if( epcs['e0'] && epcs['e1'] ) {
 			let contentRule = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)].epcs['0xE1'].edt[0].content;
-			let rate = contentRule.keyValues['0x' + epcs['e1']];
-			let pow = parseInt( epcs['e0'], 16 ) * parseFloat( rate );
+			let coefficient = contentRule.keyValues['0x' + epcs['e1']];
+			let pow = parseInt( epcs['e0'], 16 ) * parseFloat( coefficient );
 			ret['積算電力量計測値（正方向計測値）[kWh]'] = pow;
 		}
 		if( epcs['e3'] && epcs['e1'] ) {
 			let contentRule = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)].epcs['0xE1'].edt[0].content;
-			let rate = contentRule.keyValues['0x' + epcs['e1']];
-			let pow = parseInt( epcs['e3'], 16 ) * parseFloat( rate );
+			let coefficient = contentRule.keyValues['0x' + epcs['e1']];
+			let pow = parseInt( epcs['e3'], 16 ) * parseFloat( coefficient );
 			ret['積算電力量計測値（逆方向計測値）[kWh]'] = pow;
 		}
 		if( epcs['ea'] && epcs['e1'] ) {
 			let contentRule = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)].epcs['0xE1'].edt[0].content;
-			let rate = contentRule.keyValues['0x' + epcs['e1']];
+			let coefficient = contentRule.keyValues['0x' + epcs['e1']];
 
 			let yymd = ELconv.YYMDtoString( epcs['ea'].substr(0,8) );
 			let hms  = ELconv.HMStoString( epcs['ea'].substr(8,6) );
-			let pow  = parseInt( epcs['ea'].substr(14,20), 16) * parseFloat( rate );
+			let pow  = parseInt( epcs['ea'].substr(14,20), 16) * parseFloat( coefficient );
 			let dt = new Date( yymd.split('.')[0], yymd.split('.')[1]-1, yymd.split('.')[2],
 							   hms.split('.')[0], hms.split('.')[1], hms.split('.')[2]);
 
@@ -955,11 +977,11 @@ ELconv.EDTconvination = function ( eoj, epcs ) {
 		}
 		if( epcs['eb'] && epcs['e1'] ) {
 			let contentRule = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)].epcs['0xE1'].edt[0].content;
-			let rate = contentRule.keyValues['0x' + epcs['e1']];
+			let coefficient = contentRule.keyValues['0x' + epcs['e1']];
 
 			let yymd = ELconv.YYMDtoString( epcs['eb'].substr(0,8) );
 			let hms  = ELconv.HMStoString( epcs['eb'].substr(8,6) );
-			let pow  = parseInt( epcs['eb'].substr(14,20), 16) * parseFloat( rate );
+			let pow  = parseInt( epcs['eb'].substr(14,20), 16) * parseFloat( coefficient );
 			let dt = new Date( yymd.split('.')[0], yymd.split('.')[1]-1, yymd.split('.')[2],
 							   hms.split('.')[0], hms.split('.')[1], hms.split('.')[2]);
 
@@ -968,7 +990,65 @@ ELconv.EDTconvination = function ( eoj, epcs ) {
 		// if( epcs['e7'] ) {  // 瞬時電力計測値(E7)も使いやすくしたい
 		// }
 
-	}else{
+	}
+	// スマート電力量サブメータ(028D)
+	// D3:係数は任意
+	// D4:単位は必須
+	else if( eoj.substr(0,4) === '028D' ) {
+		if( epcs['d3'] && epcs['d4'] && epcs['e1'] ) {
+			let coefficient = epcs['d3']=='' ? 1 : parseInt( epcs['d3'], 16 );
+
+			let contentRule = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)].epcs['0xD4'].edt[0].content;
+			let unit = contentRule.keyValues['0x' + epcs['d4']];
+
+			let pow = parseInt( epcs['e1'], 16 ) * coefficient * parseFloat( unit );
+			ret['積算電力量計測値（正方向計測値）[kWh]'] = pow;
+		}
+		if( epcs['d3'] && epcs['d4'] && epcs['e3'] ) {
+			let coefficient = epcs['d3']=='' ? 1 : parseInt( epcs['d3'], 16 );
+
+			let contentRule = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)].epcs['0xD4'].edt[0].content;
+			let unit = contentRule.keyValues['0x' + epcs['d4']];
+
+			let pow = parseInt( epcs['e3'], 16 ) * coefficient * parseFloat( unit );
+			ret['積算電力量計測値（逆方向計測値）[kWh]'] = pow;
+		}
+		if( epcs['d3'] && epcs['e7'] ) {
+			let coefficient = epcs['d3']=='' ? 1 : parseInt( epcs['d3'], 16 );
+			let pow = parseInt( epcs['e7'], 16 ) * coefficient * parseFloat( coefficient );
+			ret['瞬時電力計測値[W]'] = pow;
+		}
+		if( epcs['d3'] && epcs['d4'] && epcs['ea'] ) {
+			let coefficient = epcs['d3']=='' ? 1 : parseInt( epcs['d3'], 16 );
+			let contentRule = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)].epcs['0xD4'].edt[0].content;
+			let unit = contentRule.keyValues['0x' + epcs['d4']];
+
+			let yymd = ELconv.YYMDtoString( epcs['ea'].substr(0,8) );
+			let hms  = ELconv.HMStoString( epcs['ea'].substr(8,6) );
+			let pow  = parseInt( epcs['ea'].substr(14,20), 16) * parseFloat( coefficient ) * parseFloat( unit );
+			let dt = new Date( yymd.split('.')[0], yymd.split('.')[1]-1, yymd.split('.')[2],
+							   hms.split('.')[0], hms.split('.')[1], hms.split('.')[2]);
+
+			ret['定時積算電力量計測値正方向'] = {'日時': dt.toISOString(), '計測値[kWh]':pow};
+		}
+		if( epcs['d3'] && epcs['d4'] && epcs['eb'] ) {
+			let coefficient = epcs['d3']=='' ? 1 : parseInt( epcs['d3'], 16 );
+			let contentRule = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)].epcs['0xD4'].edt[0].content;
+			let unit = contentRule.keyValues['0x' + epcs['d4']];
+
+			let yymd = ELconv.YYMDtoString( epcs['eb'].substr(0,8) );
+			let hms  = ELconv.HMStoString( epcs['eb'].substr(8,6) );
+			let pow  = parseInt( epcs['eb'].substr(14,20), 16) * parseFloat( coefficient ) * parseFloat( unit );
+			let dt = new Date( yymd.split('.')[0], yymd.split('.')[1]-1, yymd.split('.')[2],
+							   hms.split('.')[0], hms.split('.')[1], hms.split('.')[2]);
+
+			ret['定時積算電力量計測値逆方向'] = {'日時': dt.toISOString(), '計測値[kWh]':pow};
+		}
+		// if( epcs['e7'] ) {  // 瞬時電力計測値(E7)も使いやすくしたい
+		// }
+
+	}
+	else{
 		return null;
 	}
 	return ret;
