@@ -267,6 +267,7 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 
 ## Log
 
+- 1.8.1 バグ修正、小数点対策
 - 1.8.0 小数点対策
 - 1.7.0 スマート電力量サブメータ、瞬時電力計測値
 - 1.6.0 スマート電力量サブメータ、複雑なEPCの解釈を追加
