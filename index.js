@@ -995,6 +995,11 @@ ELconv.EDTconvination = function ( eoj, epcs ) {
 	// D3:係数は任意
 	// D4:単位は必須
 	else if( eoj.substr(0,4) === '028D' ) {
+		if( epcs['d3'] && epcs['e7'] ) {
+			let coefficient = epcs['d3']=='' ? 1 : parseInt( epcs['d3'], 16 );
+			let pow = parseInt( epcs['e7'], 16 ) * coefficient;
+			ret['瞬時電力計測値[W]'] = pow;
+		}
 		if( epcs['d3'] && epcs['d4'] && epcs['e1'] ) {
 			let coefficient = epcs['d3']=='' ? 1 : parseInt( epcs['d3'], 16 );
 
