@@ -629,11 +629,13 @@ ELconv.smartElectricEnergySubMeterE8 = function (eoj, epc, edt) {
 	let ret = {};
 
 	ret['RPhase'] = Int16Array.from([parseInt(rPhase,16)])[0] * 0.1 + '[A]';
+	ret['RPhase'] = Math.round(ret['RPhase'] * 1000) / 1000;  // 小数点対策
 
 	if( tPhase === '7FFE' ) {
 		ret['TPhase'] = 'two-wire';
 	}else{
 		ret['TPhase'] = Int16Array.from([parseInt(tPhase, 16)])[0] * 0.1 + '[A]';
+		ret['TPhase'] = Math.round(ret['TPhase'] * 1000) / 1000;  // 小数点対策
 	}
 
 	return JSON.stringify(ret) + '(' + ELconv.ByteStringSeparater(edt) +')';
@@ -646,11 +648,13 @@ ELconv.smartElectricEnergySubMeterE9 = function (eoj, epc, edt) {
 	let ret = {};
 
 	ret['R-S'] = Int16Array.from([parseInt(rPhase,16)])[0] * 0.1 + '[V]';
+	ret['R-S'] = Math.round(ret['R-S'] * 1000) / 1000;  // 小数点対策
 
 	if( tPhase === '7FFE' ) {
 		ret['S-T'] = 'two-wire';
 	}else{
 		ret['S-T'] = Int16Array.from([parseInt(tPhase, 16)])[0] * 0.1 + '[V]';
+		ret['S-T'] = Math.round(ret['S-T'] * 1000) / 1000;  // 小数点対策
 	}
 
 	return JSON.stringify(ret) + '(' + ELconv.ByteStringSeparater(edt) +')';
