@@ -7,16 +7,25 @@
     "encoding-japanese": "^1.0.25"
   },
   "scripts": {
-    "test": "mocha unitTest.js"
+    "test": "mocha \"unitTest/**/*.js\""
   },
-  "repository" :
-  {
-    "type" : "git",
-    "url" : "https://github.com/Hiroshi-Sugimura/echonet-lite-conv.js"
+  "devDependencies": {
+    "chai": "^4.5.0",
+    "mocha": "^10.8.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hiroshi-Sugimura/echonet-lite-conv.js"
   },
   "author": {
     "name": "Hiroshi SUGIMURA"
   },
   "license": "MIT",
-  "Keywords": ["ECHONET Lite", "Smart house", "IoT", "Home appliances", "Converter"]
+  "Keywords": [
+    "ECHONET Lite",
+    "Smart house",
+    "IoT",
+    "Home appliances",
+    "Converter"
+  ]
 }

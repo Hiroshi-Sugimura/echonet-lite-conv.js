@@ -25,6 +25,25 @@ package.jsonが自動的にインストールしてくれる予定です．
 This module depends on "encoding-japanese": "^1.0.25."
 The package.json will solve dependencies.
 
+## Unit Test / 単体テスト
+
+このリポジトリには `unitTest/` フォルダに Mocha + Chai のテストを配置しています。
+
+Run tests / テスト実行:
+
+```
+npm install
+npm test
+```
+
+テスト追加方法 / How to add tests:
+
+1. `unitTest/` に `*.spec.js` という名前でファイルを作成。
+2. `const { expect } = require('chai');` を使い `expect` アサーションで記述。
+3. `npm test` で確認。
+
+最初のサンプルは `unitTest/basic.spec.js` を参考にしてね。
+
 
 ## Demos
 
