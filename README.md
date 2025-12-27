@@ -7,6 +7,10 @@ This module provides **converter for ECHONET Lite protocol**.
 The module to process ECHONET Lite protocol is [here](https://www.npmjs.com/package/echonet-lite).
 
 
+## Manual
+
+http://hiroshi-sugimura.github.io/echonet-lite-conv.js/
+
 
 ## Install，インストール
 
