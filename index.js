@@ -5,15 +5,31 @@
 //////////////////////////////////////////////////////////////////////
 'use strict'
 
+/**
+ * ECHONET Lite プロトコル コンバーターモジュール
+ * @module echonet-lite-conv
+ * @description ECHONET Lite プロトコルのデータ変換を行うモジュールです。
+ * EOJ/EPC/EDTの解析、日時フォーマット変換、各種機器データの変換機能を提供します。
+ * @author Hiroshi SUGIMURA
+ * @license MIT
+ */
+
 //////////////////////////////////////////////////////////////////////
 const Encoding = require('encoding-japanese');
 const fs = require('fs');
 
-// クラス変数
+/**
+ * ECHONET Lite コンバーターオブジェクト
+ * @namespace ELconv
+ */
 let ELconv = {
+	/** @type {Object} 辞書データ */
 	m_dict: {},
+	/** @type {string} 最新仕様バージョン */
 	m_latestSpec: '1.12',
+	/** @type {string} 最新付録バージョン */
 	m_latestAppendix:'I',
+	/** @type {boolean} 初期化フラグ */
 	m_initialized: false
 };
 
@@ -21,6 +37,8 @@ let ELconv = {
 /**
  * 辞書ファイルを読み込んで初期化する
  * ノードプロファイル、スーパークラス、デバイスオブジェクト、メーカーコードの辞書を読み込む
+ * @function initialize
+ * @memberof module:echonet-lite-conv
  */
 ELconv.initialize = function () {
 	// 本来はすべての辞書をもって，条件分けすべき
@@ -46,6 +64,8 @@ ELconv.initialize = function () {
 
 /**
  * 1バイトを文字列の16進表現へ変換(1Byteは必ず2文字にする)
+ * @function toHexString
+ * @memberof module:echonet-lite-conv
  * @param {number} byte - 変換する1バイトの数値
  * @returns {string} 2文字の16進数文字列
  */
@@ -57,6 +77,8 @@ ELconv.toHexString = function( byte ) {
 
 /**
  * 16進表現の文字列を数値のバイト配列へ変換
+ * @function toHexArray
+ * @memberof module:echonet-lite-conv
  * @param {string} string - 16進数の文字列
  * @returns {number[]} バイト配列
  */
@@ -75,6 +97,8 @@ ELconv.toHexArray = function( string ) {
 
 /**
  * 年月データを文字列に変換 (Year(2byte), Month(1byte))
+ * @function YYMtoString
+ * @memberof module:echonet-lite-conv
  * @param {string} yym - 年月の16進数文字列
  * @returns {string} 'YYYY.M'形式の文字列
  */
@@ -87,6 +111,8 @@ ELconv.YYMtoString = function( yym ) {  // Year(2byte), Month(1byte)
 
 /**
  * 年月日データを文字列に変換 (Year(2byte), Month(1byte), Day(1byte))
+ * @function YYMDtoString
+ * @memberof module:echonet-lite-conv
  * @param {string} yymd - 年月日の16進数文字列
  * @returns {string} 'YYYY.M.D'形式の文字列
  */
@@ -100,6 +126,8 @@ ELconv.YYMDtoString = function( yymd ) { // Year(2byte), Month(1byte), Day(1byte
 
 /**
  * 時分データを文字列に変換 (Hour(1byte), Minute(1byte))
+ * @function HMtoString
+ * @memberof module:echonet-lite-conv
  * @param {string} hm - 時分の16進数文字列
  * @returns {string} 'H.M'形式の文字列
  */
@@ -112,6 +140,8 @@ ELconv.HMtoString = function( hm ) {  // Hour(1byte), Minute(1byte)
 
 /**
  * 時分秒データを文字列に変換 (Hour(1byte), Minute(1byte), Second(1byte))
+ * @function HMStoString
+ * @memberof module:echonet-lite-conv
  * @param {string} hms - 時分秒の16進数文字列
  * @returns {string} 'H.M.S'形式の文字列
  */
@@ -125,6 +155,8 @@ ELconv.HMStoString = function( hms ) { // Hour(1byte), Minute(1byte), Second(1by
 
 /**
  * 時分フレームデータを文字列に変換 (Hour(1byte), Minute(1byte), Frame(1byte))
+ * @function HMFtoString
+ * @memberof module:echonet-lite-conv
  * @param {string} hmf - 時分フレームの16進数文字列
  * @returns {string} 'H.M.F'形式の文字列
  */
@@ -138,6 +170,8 @@ ELconv.HMFtoString = function( hmf ) { // Hour(1byte), Minute(1byte), Frame(1byt
 
 /**
  * 分秒データを文字列に変換 (Minute(1byte), Second(1byte))
+ * @function MStoString
+ * @memberof module:echonet-lite-conv
  * @param {string} ms - 分秒の16進数文字列
  * @returns {string} 'M.S'形式の文字列
  */
@@ -150,6 +184,8 @@ ELconv.MStoString = function( ms ) {  // Minute(1byte), Second(1byte)
 
 /**
  * 16進数文字列をShift_JIS文字列に変換
+ * @function HEXStringtoShiftJIS
+ * @memberof module:echonet-lite-conv
  * @param {string} hexString - 16進数文字列
  * @returns {string} Shift_JISでデコードされた文字列
  */
@@ -160,6 +196,8 @@ ELconv.HEXStringtoShiftJIS = function( hexString ) {
 
 /**
  * 16進数文字列をASCII文字列に変換
+ * @function HEXStringtoASCII
+ * @memberof module:echonet-lite-conv
  * @param {string} hexString - 16進数文字列
  * @returns {string} ASCIIでデコードされた文字列(null文字を除去)
  */
@@ -172,6 +210,8 @@ ELconv.HEXStringtoASCII = function( hexString ) {
 
 /**
  * ビットマップデータを文字列に変換
+ * @function BITMAPtoString
+ * @memberof module:echonet-lite-conv
  * @param {string} edt - EDTの16進数文字列
  * @param {Array} typeArray - ビット名と値のマッピング配列
  * @returns {string} 各ビットの状態を示す文字列
@@ -191,6 +231,8 @@ ELconv.BITMAPtoString = function( edt, typeArray ) {
 
 /**
  * バイト列文字列を2文字づつスペース区切りにする
+ * @function ByteStringSeparater
+ * @memberof module:echonet-lite-conv
  * @param {string} bytestring - バイト列の文字列
  * @returns {string} スペース区切りの文字列
  */
@@ -211,6 +253,8 @@ ELconv.ByteStringSeparater = function( bytestring ) {
 
 /**
  * EOJ(ECHONET Lite Object)を人間が読める文字列に変換
+ * @function refEOJ
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @returns {string} EOJの名称または元の文字列
  */
@@ -228,6 +272,8 @@ ELconv.refEOJ = function(eoj) {
 
 /**
  * EPC(ECHONET Lite Property)を人間が読める文字列に変換
+ * @function refEPC
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {string} epc - EPCの16進数文字列
  * @returns {string} EPCの名称または元の文字列
@@ -271,6 +317,8 @@ ELconv.refEPC = function(eoj, epc) {
 
 /**
  * 特殊なEPCの仕様に基づいてEDTを解析
+ * @function selectReferSpec
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {string} epc - EPCの16進数文字列
  * @param {string} edt - EDTの16進数文字列
@@ -302,6 +350,8 @@ ELconv.selectReferSpec = function( eoj, epc, edt ) {
 
 /**
  * EPC 0x81 設置場所の解析
+ * @function referSpec81
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {string} epc - EPCの16進数文字列
  * @param {string} edt - EDTの16進数文字列
@@ -420,6 +470,8 @@ ELconv.referSpec81 = function(eoj, epc, edt) {
 
 /**
  * EPC 0x82 Version情報の解析
+ * @function referSpec82
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {string} epc - EPCの16進数文字列
  * @param {string} edt - EDTの16進数文字列
@@ -461,6 +513,8 @@ ELconv.referSpec82 = function ( eoj, epc, edt) {
 
 /**
  * EPC 0x8A メーカーコードの解析
+ * @function referSpec8A
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {string} epc - EPCの16進数文字列
  * @param {string} edt - EDTの16進数文字列
@@ -482,6 +536,8 @@ ELconv.referSpec8A = function(eoj, epc, edt) {
 
 /**
  * EPC 0x9D, 0x9E, 0x9F プロパティマップの解析
+ * @function referSpec9D9E9F
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {string} epc - EPCの16進数文字列
  * @param {string} edt - EDTの16進数文字列
@@ -513,6 +569,8 @@ ELconv.referSpec9D9E9F = function(eoj, epc, edt) {
 /**
  * プロパティマップの記述形式2を解析してForm1に変換
  * 16以上のプロパティ数の時に使用
+ * @function parseMapForm2
+ * @memberof module:echonet-lite-conv
  * @param {number[]} array - バイト配列
  * @returns {number[]} Form1形式のプロパティ配列
  */

@@ -33,20 +33,46 @@ The package.json will solve dependencies.
 
 このリポジトリには `unitTest/` フォルダに Mocha + Chai のテストを配置しています。
 
-Run tests / テスト実行:
+### Run tests / テスト実行:
 
-```
+```bash
 npm install
 npm test
 ```
 
-テスト追加方法 / How to add tests:
+### テストファイル構成 / Test Files Structure:
 
-1. `unitTest/` に `*.spec.js` という名前でファイルを作成。
-2. `const { expect } = require('chai');` を使い `expect` アサーションで記述。
-3. `npm test` で確認。
+- **basic.spec.js**: 基本的なユーティリティ関数のテスト (toHexString, toHexArray, 日時変換関数など)
+- **utils.spec.js**: ヘルパー関数のテスト (ASCII/ShiftJIS変換, ビットマップ, プロパティマップなど)
+- **parseEDT.spec.js**: EDT解析とEOJ/EPC参照関数のテスト
+- **distribution.spec.js**: 分電盤メータリング(0x0287)関連のテスト
+- **smartMeter.spec.js**: スマート電力量メータ(0x0288, 0x028D)関連のテスト
+- **error.spec.js**: エラーハンドリングとエッジケースのテスト
+- **integration.spec.js**: 統合テスト (EDTconvination, refer関数など)
+
+### テスト追加方法 / How to add tests:
+
+1. `unitTest/` に `*.spec.js` という名前でファイルを作成
+2. `const { expect } = require('chai');` を使い `expect` アサーションで記述
+3. `npm test` で確認
 
 最初のサンプルは `unitTest/basic.spec.js` を参考にしてね。
+
+### テストカバレッジ / Test Coverage:
+
+現在のテストでは以下の機能をカバーしています:
+
+- ✅ 16進数変換 (toHexString, toHexArray)
+- ✅ 日時フォーマット変換 (YYMD, HMS, HMF, MS)
+- ✅ 文字エンコーディング変換 (ASCII, Shift_JIS)
+- ✅ ビットマップ・プロパティマップ解析
+- ✅ EOJ/EPC参照とEDT解析
+- ✅ 分電盤メータリング各種EPC
+- ✅ スマート電力量メータ各種EPC
+- ✅ エラーハンドリングとエッジケース
+- ✅ 統合テスト (複数EPCの組み合わせ処理)
+
+
 
 
 ## Demos
