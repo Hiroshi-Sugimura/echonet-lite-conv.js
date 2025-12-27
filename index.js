@@ -597,6 +597,8 @@ ELconv.parseMapForm2 = function( array ) {
 
 /**
  * 分電盤メータリング(0x0287) EPC 0xC2 積算電力量計測単位の解析
+ * @function distributionBoardC2
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {string} epc - EPCの16進数文字列
  * @param {string} edt - EDTの16進数文字列
@@ -640,6 +642,8 @@ ELconv.distributionBoardC2 = function ( eoj, epc, edt) {
 /**
  * 分電盤メータリング チャンネル範囲指定の解析
  * EPC: 0xB2, 0xB4, 0xB6, 0xB9, 0xBB, 0xBD
+ * @function distributionBoardB2B4B6B9BBBD
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {string} epc - EPCの16進数文字列
  * @param {string} edt - EDTの16進数文字列
@@ -652,6 +656,8 @@ ELconv.distributionBoardB2B4B6B9BBBD = function ( eoj, epc, edt) {
 /**
  * 分電盤メータリング EPC 0xB3 積算電力量計測値リスト(片方向)
  * 単位がC2に依存する
+ * @function distributionBoardB3
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {string} epc - EPCの16進数文字列
  * @param {string} edt - EDTの16進数文字列
@@ -674,6 +680,8 @@ ELconv.distributionBoardB3 = function ( eoj, epc, edt) {
 /**
  * 分電盤メータリング EPC 0xB5 瞬時電流計測値リスト(片方向)
  * 単位: 0.1A
+ * @function distributionBoardB5
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {string} epc - EPCの16進数文字列
  * @param {string} edt - EDTの16進数文字列
@@ -696,6 +704,8 @@ ELconv.distributionBoardB5 = function ( eoj, epc, edt) {
 /**
  * 分電盤メータリング EPC 0xB7 瞬時電力計測値リスト(片方向)
  * 単位: 1W
+ * @function distributionBoardB7
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {string} epc - EPCの16進数文字列
  * @param {string} edt - EDTの16進数文字列
@@ -718,6 +728,8 @@ ELconv.distributionBoardB7 = function ( eoj, epc, edt) {
 /**
  * 分電盤メータリング EPC 0xBA 積算電力量計測値リスト(双方向)
  * 単位はC2に従う
+ * @function distributionBoardBA
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {string} epc - EPCの16進数文字列
  * @param {string} edt - EDTの16進数文字列
@@ -742,6 +754,8 @@ ELconv.distributionBoardBA = function ( eoj, epc, edt) {
 /**
  * 分電盤メータリング EPC 0xBC 瞬時電流計測値リスト(双方向)
  * 単位: 0.1A
+ * @function distributionBoardBC
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {string} epc - EPCの16進数文字列
  * @param {string} edt - EDTの16進数文字列
@@ -766,6 +780,8 @@ ELconv.distributionBoardBC = function ( eoj, epc, edt) {
 /**
  * 分電盤メータリング EPC 0xBE 瞬時電力計測値リスト(双方向)
  * 単位: W
+ * @function distributionBoardBE
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {string} epc - EPCの16進数文字列
  * @param {string} edt - EDTの16進数文字列
@@ -787,6 +803,8 @@ ELconv.distributionBoardBE = function ( eoj, epc, edt) {
 
 /**
  * 低圧スマート電力量メータ(0x0288) EPC 0xE8 瞬時電流計測値の解析
+ * @function lowVoltageSmartElectricEnergyMeterE8
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {string} epc - EPCの16進数文字列
  * @param {string} edt - EDTの16進数文字列
@@ -810,6 +828,8 @@ ELconv.lowVoltageSmartElectricEnergyMeterE8 = function (eoj, epc, edt) {
 
 /**
  * 低圧スマート電力量メータ EPC 0xEA/0xEB 定時積算電力量計測値の解析
+ * @function lowVoltageSmartElectricEnergyMeterEAEB
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {string} epc - EPCの16進数文字列(0xEA:正方向, 0xEB:逆方向)
  * @param {string} edt - EDTの16進数文字列
@@ -834,6 +854,8 @@ ELconv.lowVoltageSmartElectricEnergyMeterEAEB = function (eoj, epc, edt) {
 
 /**
  * スマート電力量サブメータ(0x028D) EPC 0xE8 瞬時電流計測値の解析
+ * @function smartElectricEnergySubMeterE8
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {string} epc - EPCの16進数文字列
  * @param {string} edt - EDTの16進数文字列
@@ -857,6 +879,8 @@ ELconv.smartElectricEnergySubMeterE8 = function (eoj, epc, edt) {
 
 /**
  * スマート電力量サブメータ EPC 0xE9 瞬時電圧計測値の解析
+ * @function smartElectricEnergySubMeterE9
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {string} epc - EPCの16進数文字列
  * @param {string} edt - EDTの16進数文字列
@@ -880,6 +904,8 @@ ELconv.smartElectricEnergySubMeterE9 = function (eoj, epc, edt) {
 
 /**
  * スマート電力量サブメータ EPC 0xEA/0xEB 定時積算電力量計測値の解析
+ * @function smartElectricEnergySubMeterEAEB
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {string} epc - EPCの16進数文字列(0xEA:正方向, 0xEB:逆方向)
  * @param {string} edt - EDTの16進数文字列
@@ -909,6 +935,8 @@ ELconv.smartElectricEnergySubMeterEAEB = function (eoj, epc, edt) {
 
 /**
  * ネットワーク内のECHONET Lite機器全体情報を参照し変換する
+ * @function refer
+ * @memberof module:echonet-lite-conv
  * @param {Object} facilities - 機器情報オブジェクト
  * @param {Function} callback - 変換結果を受け取るコールバック関数
  */
@@ -941,6 +969,8 @@ ELconv.refer = function( facilities, callback ) {
 
 /**
  * EDT(ECHONET Lite Data)を解析して人間が読める形式に変換
+ * @function parseEDT
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {string} epc - EPCの16進数文字列
  * @param {string} edt - EDTの16進数文字列
@@ -1179,6 +1209,8 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 /**
  * 複数のEPCが関連して意味をなすデータを組み合わせて解析
  * 主に電力量計測関連の係数と値の組み合わせ処理
+ * @function EDTconvination
+ * @memberof module:echonet-lite-conv
  * @param {string} eoj - EOJの16進数文字列
  * @param {Object} epcs - EPCとEDTのマッピングオブジェクト
  * @returns {Object|null} 組み合わせ解析結果のオブジェクトまたはnull
@@ -1302,6 +1334,8 @@ ELconv.EDTconvination = function ( eoj, epcs ) {
 
 /**
  * ESV(ECHONET Lite Service)コードを文字列に変換
+ * @function refESV
+ * @memberof module:echonet-lite-conv
  * @param {string} esv - ESVの16進数文字列
  * @returns {string} ESVの名称
  */
@@ -1329,6 +1363,8 @@ ELconv.refESV = function(esv)  {
 
 /**
  * ECHONET Lite電文(ELS)を解析して人間が読める形式に変換
+ * @function elsAnarysis
+ * @memberof module:echonet-lite-conv
  * @param {Object} els - ECHONET Lite電文オブジェクト
  * @param {Function} callback - 解析結果を受け取るコールバック関数
  */
