@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Home - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    
+    <h2><a href="index.html">Home</a></h2>
+    
+</nav>
+
+<div id="main">
+    
+
+    
+
+
+
+    
+
+
+    <section class="package">
+        <h3> </h3>		
+    </section>
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    <section class="readme usertext">
+        <article><h1>Overview，概要</h1>
+<p>このモジュールは<strong>ECHONET Liteプロトコルのコンバーター</strong>として機能します．
+基本的に，<a href="https://www.npmjs.com/package/echonet-lite">echonet-lite.js</a>とセットで利用することを想定していますが単体でも利用できます．</p>
+<p>This module provides <strong>converter for ECHONET Lite protocol</strong>.
+The module to process ECHONET Lite protocol is <a href="https://www.npmjs.com/package/echonet-lite">here</a>.</p>
+<h2>Install，インストール</h2>
+<p>下記コマンドでインストールされます．</p>
+<p>Install this module.</p>
+<pre class="prettyprint source"><code> > npm install echonet-lite-conv
+</code></pre>
+<h3>Dependencies, 依存関係</h3>
+<p>このモジュールは&quot;encoding-japanese&quot;の&quot;^1.0.25.&quot;に依存しています．
+package.jsonが自動的にインストールしてくれる予定です．</p>
+<p>This module depends on &quot;encoding-japanese&quot;: &quot;^1.0.25.&quot;
+The package.json will solve dependencies.</p>
+<h2>Unit Test / 単体テスト</h2>
+<p>このリポジトリには <code>unitTest/</code> フォルダに Mocha + Chai のテストを配置しています。</p>
+<p>Run tests / テスト実行:</p>
+<pre class="prettyprint source"><code>npm install
+npm test
+</code></pre>
+<p>テスト追加方法 / How to add tests:</p>
+<ol>
+<li><code>unitTest/</code> に <code>*.spec.js</code> という名前でファイルを作成。</li>
+<li><code>const { expect } = require('chai');</code> を使い <code>expect</code> アサーションで記述。</li>
+<li><code>npm test</code> で確認。</li>
+</ol>
+<p>最初のサンプルは <code>unitTest/basic.spec.js</code> を参考にしてね。</p>
+<h2>Demos</h2>
+<p>下記のように使えます．</p>
+<p>An example of a script is following:</p>
+<pre class="prettyprint source lang-JavaScript:example"><code>//==================================
+// EL最小構成, EL minimum sample
+// ECHONET Liteのコンバーターを準備, ready this module
+var ELconv = require('echonet-lite-conv');
+//==================================
+// コンバータを初期化しておく（JSON形式の定義データを読む）, initialize this module
+ELconv.initialize();
+//==================================
+// require('echonet-lite') で利用される EL.facilities の受信データがこんな感じで管理されるので
+// facilities are managed by 'echonet-lite' module.
+var facilities =
+{ '192.168.2.104':
+   { '05ff01': { '80': '30', d6: '' },
+     '0ef001': { d6: '0105ff01' } },
+  '192.168.2.127': { '0ef001': { '80': '30', d6: '0105fe01' } },
+  '192.168.2.148': { '05ff01': { d6: '' } },
+  '192.168.2.159':
+   { '029001': { '80': '31', d5: '01029001' },
+     '0ef001': { '80': '30' } },
+  '192.168.2.115':
+   { '013501':
+      { '80': '31',
+        f2: '400000000000000000000000000000000000020000ff0000ffff3100',
+        c0: '42',
+        '01': '' } },
+    '192.168.2.103': { '05ff01': { '80': '', d6: '' } } };
+//==================================
+// こんな感じでテキスト参照に変換できる
+// converter works as follow.
+ELconv.refer( facilities, function( devs ) {
+    console.dir(devs);  // result
+});
+</code></pre>
+<ul>
+<li>result (= devs in ELconv.refer function)</li>
+</ul>
+<p>console.dir( devs );</p>
+<pre class="prettyprint source lang-JavaScript:output"><code>{ IPs:
+   [ '192.168.0.35', ...],
+  '192.168.0.35':
+   { EOJs: [ 'ノードプロファイル01(0ef001)', 'コントローラ01(05ff01)' ],
+     'ノードプロファイル01(0ef001)':
+      { EPCs:
+         [ '動作状態(80)',
+           'Version情報(82)',
+           '識別番号(83)',
+           'インスタンスリスト通知(D5)',
+           '自ノードインスタンスリストS(D6)',
+           '状変アナウンスプロパティマップ(9D)',
+           'Setプロパティマップ(9E)',
+           'Getプロパティマップ(9F)',
+           'メーカコード(8A)',
+           '自ノードインスタンス数(D3)',
+           '自ノードクラス数(D4)',
+           '自ノードクラスリストS(D7)' ],
+        '動作状態(80)': 'ON(30)',
+        'Version情報(82)': 'referSpec(010A0100)',
+        '識別番号(83)': 'referSpec(FE00000000000000000000000000000000)',
+        'インスタンスリスト通知(D5)': 'keyValues(0105FF01)',
+        '自ノードインスタンスリストS(D6)': 'コントローラ01(0105FF01)',
+        '状変アナウンスプロパティマップ(9D)': 'referSpec(0280D5)',
+        'Setプロパティマップ(9E)': 'referSpec(00)',
+        'Getプロパティマップ(9F)': 'referSpec(098082838AD3D4D5D6D7)',
+        'メーカコード(8A)': 'referSpec(000077)',
+        '自ノードインスタンス数(D3)': '1(000001)',
+        '自ノードクラス数(D4)': '2(0002)',
+        '自ノードクラスリストS(D7)': 'コントローラ(0105FF)' },
+     'コントローラ01(05ff01)': { EPCs: [ '動作状態(80)' ], '動作状態(80)': 'ON(30)' } },
+.
+.
+.
+</code></pre>
+<h2>Stracture of input facilities data</h2>
+<pre class="prettyprint source"><code>{ '192.168.2.103':
+   { '05ff01': { '80': '', d6: '' },
+     '0ef001': { '80': '30', d6: '0100' } },
+  '192.168.2.104': { '0ef001': { d6: '0105ff01' }, '05ff01': { '80': '30' } },
+  '192.168.2.115': { '0ef001': { '80': '30', d6: '01013501' } } }
+</code></pre>
+<h2>Stracture of result data</h2>
+<pre class="prettyprint source"><code>{ IPs: [ '&lt;ip1>', '&lt;ip2>' ],
+  '&lt;ip1>': { EPCs: [ '&lt;epc1>', '&lt;epc2>' ],
+            '&lt;epc1>': '&lt;edt1>',
+            '&lt;epc2>': '&lt;edt2>'
+           }
+  '&lt;ip2>': { EPCs: [ '&lt;epc3>', '&lt;epc4>'],
+            '&lt;epc3>': '&lt;edt3>',
+            '&lt;epc4>': '&lt;edt4>'
+           }
+}
+</code></pre>
+<p><a href="https://www.npmjs.com/package/echonet-lite">Here</a> helps you to use this stracture and to communicate the ECHONET Lite protocol.</p>
+<h2>API</h2>
+<ul>
+<li>First, you must initialize this converter.
+コンバータを初期化しておく（JSON形式の定義データを読む）</li>
+</ul>
+<pre class="prettyprint source"><code>ELconv.initialize();
+</code></pre>
+<ul>
+<li>You can use this converter as following.
+こんな感じでテキスト参照に変換できる</li>
+</ul>
+<pre class="prettyprint source"><code>ELconv.refer( facilities, function( devs ) {
+	console.dir(devs);
+});
+</code></pre>
+<h2>ECHONET Lite Converter 攻略情報</h2>
+<p>Demosを見ればだいたいわかると思う．EDTにアクセスするには例えば，</p>
+<p>For using this module, data accesing sample is following.</p>
+<pre class="prettyprint source"><code>ip  = devs.IPs[3];                // '192.168.2.159'
+eoj = devs[ip].EOJs[1];           // 'Node profile01'
+epc = devs[ip][eoj].EPCs[0];      // 'Operation status'
+edt = devs[ip][eoj][epc];         // '30'
+console.log( edt );
+</code></pre>
+<h2>Memo</h2>
+<p>下記ファイルが辞書になっている．</p>
+<p>Following files are the dictionary for ECHONET Lite in JSON format.</p>
+<ul>
+<li>./node_modules/echonet-lite-conv/Appendix_G/deviceObject_G.json</li>
+<li>./node_modules/echonet-lite-conv/Appendix_G/superClass_G.json</li>
+<li>./node_modules/echonet-lite-conv/Appendix_H/deviceObject_H.json</li>
+<li>./node_modules/echonet-lite-conv/Appendix_H/superClass_H.json</li>
+<li>./node_modules/echonet-lite-conv/Appendix_I/deviceObject_I.json</li>
+<li>./node_modules/echonet-lite-conv/Appendix_I/superClass_I.json</li>
+<li>./node_modules/echonet-lite-conv/Spec_1.11/nodeProfile.json</li>
+<li>./node_modules/echonet-lite-conv/Spec_1.12/nodeProfile.json</li>
+</ul>
+<h3>ECHONET Lite versions</h3>
+<ul>
+<li>2011.12.21 Appendix A (J)</li>
+<li>2011.12.21 Spec Ver 1.00 (J)</li>
+<li>2012.03.05 Spec Ver 1.01 (E)</li>
+<li>2012.03.05 Spec Ver 1.01 (J)</li>
+<li>2012.08.02 Appendix B (E)</li>
+<li>2012.08.02 Appendix B (J)</li>
+<li>2012.09.03 Spec Ver 1.00 (E)</li>
+<li>2012.09.13 Appendix A (E)</li>
+<li>2013.03.31 Spec Ver 1.10 (E)</li>
+<li>2013.03.31 Spec Ver 1.10 (J)</li>
+<li>2013.05.31 Appendix C (E)</li>
+<li>2013.05.31 Appendix C (J)</li>
+<li>2013.10.31 Appendix D (E)</li>
+<li>2013.10.31 Appendix D (J)</li>
+<li>2014.03.27 Appendix E (J)</li>
+<li>2014.06.09 Spec Ver 1.11 (E)</li>
+<li>2014.06.09 Spec Ver 1.11 (J)</li>
+<li>2014.09.03 Appendix F (E)</li>
+<li>2014.09.03 Appendix F (J)</li>
+<li>2015.03.29 Appendix F (J) Errata</li>
+<li>2015.05.29 Appendix A (J) Errata</li>
+<li>2015.05.29 Appendix B (J) Errata</li>
+<li>2015.05.29 Appendix C (J) Errata</li>
+<li>2015.05.29 Appendix D (J) Errata</li>
+<li>2015.05.29 Appendix E (E)</li>
+<li>2015.05.29 Appendix E (J) Errata</li>
+<li>2015.05.29 Appendix G (E)</li>
+<li>2015.05.29 Appendix G (J)</li>
+<li>2015.06.16 Appendix G (J) Revised</li>
+<li>2015.09.30 Spec Ver 1.12 (J)</li>
+<li>2016.03.27 Spec Ver 1.12 (E)</li>
+<li>2016.05.27 Appendix H (E)</li>
+<li>2016.05.27 Appendix H (J)</li>
+<li>2016.08.24 Appendix H (J) Errata</li>
+<li>2016.12.09 Appendix I (J)</li>
+<li>2017.03.24 Spec Ver 1.12 (J) Errata</li>
+</ul>
+<h2>Author</h2>
+<p>神奈川工科大学  創造工学部  ホームエレクトロニクス開発学科．</p>
+<p>Dept. of Home Electronics, Faculty of Creative Engineering, Kanagawa Institute of Technology.</p>
+<p>杉村　博</p>
+<p>SUGIMURA, Hiroshi</p>
+<h3>辞書データ作成とご協力</h3>
+<p>ECHONET LiteのJSONデータベースは，神奈川工科大学スマートハウス研究センターの藤田裕之さんが作成したJSON dataを利用しました．</p>
+<p>The program uses JSON database for ECHONET Lite objects generated by Kanagawa Institute of Technology, as following URL.
+<a href="https://github.com/KAIT-HEMS/ECHONET-APPENDIX">https://github.com/KAIT-HEMS/ECHONET-APPENDIX</a></p>
+<p>Ver. 0.05では，辞書「dictionary_b.json」および「dictionary_c.json」作成にあたり，下記の株式会社ソニーコンピュータサイエンス研究所のCSVファイルを利用いたしました．</p>
+<p>For making dictionary_b.json and dictionary_c.json on Ver. 0.0.5, It was used, that database for ECHONET Lite objects generated by Sony Computer Science Laboratories, Inc as following URL.</p>
+<p>SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for ECHONET Lite home appliances, sensors, and so on.
+<a href="https://github.com/SonyCSL/ECHONETLite-ObjectDatabase">https://github.com/SonyCSL/ECHONETLite-ObjectDatabase</a></p>
+<h2>Log</h2>
+<ul>
+<li>1.8.1 バグ修正、小数点対策</li>
+<li>1.8.0 小数点対策</li>
+<li>1.7.0 スマート電力量サブメータ、瞬時電力計測値</li>
+<li>1.6.0 スマート電力量サブメータ、複雑なEPCの解釈を追加</li>
+<li>1.5.5 スマート電力量サブメータ追加、もしかしたらEPC間違っているかもしれない</li>
+<li>1.5.4 電気掃除機追加</li>
+<li>1.5.3 低圧スマメ、時間をISO Stringにした</li>
+<li>1.5.2 低圧スマメ、複雑なEPCの解釈を追加</li>
+<li>1.5.1 いらないログ消した</li>
+<li>1.5.0 低圧スマメに少し対応</li>
+<li>1.4.0 初期化していなかったら自動的に初期化する</li>
+<li>1.3.0 低圧スマメちょっと修正</li>
+<li>1.2.0 低圧スマメちょっと修正</li>
+<li>1.1.0 1Byte単位でスペースいれる。</li>
+<li>1.0.3 分電盤メータリングのバグ改修。</li>
+<li>1.0.2 分電盤メータリングBEのバグ改修。</li>
+<li>1.0.1 分電盤メータリングに少し対応した。</li>
+<li>1.0.0 ascii変換のときのNull文字削除に対応した。動作安定してきたのでVer1とする。</li>
+<li>0.0.22 getはFixedよりRequestのほうがわかりよい。bug fix: SEOJとDEOJが逆転するときにelsAnarysisが解析失敗することがあった。識別番号はそのままで意味があるものとした。</li>
+<li>0.0.21 let対応，unit test，Release対応</li>
+<li>0.0.20 GETはEDT00固定なので，それに対応</li>
+<li>0.0.19 refESVでESVがコンソールにでるバグを修正</li>
+<li>0.0.18 elsの解析に対応</li>
+<li>0.0.17 'use strict'対応，rawData:ShiftJIS対応（オーブンレンジの0xEAくらいしかないのだが）</li>
+<li>0.0.16 README.md修正</li>
+<li>0.0.15 Version情報に対応した．すごく古いバージョンにはうまく対応できていないかもしれない．</li>
+<li>0.0.14 状変アナウンスプロパティマップ(9D), Setプロパティマップ(9E), Getプロパティマップ(9F)に対応した．</li>
+<li>0.0.13 メーカコードに対応した．</li>
+<li>0.0.12 設置場所の国土地理院場所情報コード方式は対応した．緯度経度高さ方式の16バイトの定義が不明なので誰か教えて．</li>
+<li>0.0.11 設置場所の1バイト方式に対応した．緯度経度高さ方式と国土地理院場所情報コード方式はめんどくさい．</li>
+<li>0.0.10 bitmap方式対応した．対応していないデータタイプはあと2種類（rawData:ShiftJIS，others）あるけどきびしい．よく考えるとRepeatCount対応していないかも．</li>
+<li>0.0.9 customTypeタイプとrawData.ASCIIに対応した．対応していないデータタイプ（bitmap，rawData:ShiftJIS，others）をもう少しわかりやすく表現してみた．</li>
+<li>0.0.8 levelタイプに対応した．ただし，クッキングヒータクラスの加熱出力設定には非対応．対応していないデータタイプ（bitmap，rawData，customType，others）をもう少しわかりやすく表現してみた．</li>
+<li>0.0.7 辞書ファイルをVer 1.12のNode ProfileとRelease Iに対応した．内部的にはRelease Hも持っている．その関連で辞書の位置が変わった．EDTを少し解釈するようになった．解釈できないEDTはcontentTypeを付けることにした．EPCのF0からFFまでをユーザ定義領域と解釈結果を付けることにした．</li>
+<li>0.0.6 辞書ファイルをVer 1.11eのNode ProfileとRelease Gに対応した．日本語版になった．英語版辞書も欲しい．</li>
+<li>0.0.5 辞書ファイルをVer 1.11eのNode ProfileとRelease CのObject super classにかなり対応した．</li>
+<li>0.0.4 攻略情報が，「ECHONET Lite 攻略情報」だったので「ECHONET Lite Converter 攻略情報」にした．READMEを適当に英語追加した．</li>
+<li>0.0.3 辞書ファイルをRelease Cにかなり対応した．これからすべてのReleaseバージョンにどう対応するかが検討事項する．</li>
+<li>0.0.2 README.mdをそこそこきれいにした．攻略情報と辞書ファイルのことも追記した．</li>
+<li>0.0.1 枠組み公開した．</li>
+</ul>
+<h2>Known Issues（既知の問題）</h2>
+<ul>
+<li>本当はRelease versionをみて，対応したバージョンの辞書を参考にしないといけないが，いまは最新データベースしか見に行っていない．たとえば古いEL機器は製造番号8DがASCIIでなくて0が入っていたりする。</li>
+<li>levelタイプの，クッキングヒータクラスの加熱出力設定には非対応．</li>
+<li>英語に対応してない（JSON DBの英語対応待ち）．</li>
+<li>設置場所17バイト方式の，緯度経度高さ方式の16バイトの割り当てが不明．</li>
+<li>RepeatCount非対応</li>
+<li>データタイプothersはオブジェクト別対応のため，非対応</li>
+</ul></article>
+    </section>
+
+
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Sat Dec 27 2025 14:07:35 GMT+0000 (Coordinated Universal Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>
