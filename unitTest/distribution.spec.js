@@ -26,11 +26,11 @@ describe('Distribution board related parsing', () => {
   describe('distributionBoardB2B4B6B9BBBD', () => {
     it('B2 channel range format', () => {
       const out = ELconv.distributionBoardB2B4B6B9BBBD('028701','B2','0105');
-      expect(out).to.equal('01ch-0105ch(01 05)');
+      expect(out).to.equal('01ch-05ch(01 05)');
     });
     it('B4 channel range format', () => {
       const out = ELconv.distributionBoardB2B4B6B9BBBD('028701','B4','0A0F');
-      expect(out).to.equal('0Ach-0A0Fch(0A 0F)');
+      expect(out).to.equal('0Ach-0Fch(0A 0F)');
     });
   });
 

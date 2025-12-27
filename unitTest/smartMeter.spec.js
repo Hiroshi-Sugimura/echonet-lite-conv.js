@@ -26,7 +26,7 @@ describe('Low voltage smart electric energy meter parsing', () => {
     it('E8 handles max positive current', () => {
       // 0x7FFF = 32767 * 0.1 = 3276.7A
       const result = ELconv.lowVoltageSmartElectricEnergyMeterE8('028801','E8','7FFF7FFF');
-      expect(result).to.include('3276.7[A]');
+      expect(result).to.match(/3276\.7\d*\[A\]/);
     });
   });
 

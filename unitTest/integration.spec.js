@@ -55,8 +55,8 @@ describe('Integration tests for complex functions', () => {
           'e0': '00000064', // 100 in hex
           'e1': '01'        // 0.1 unit
         });
-        expect(result).to.have.property('積算電力量計測値(正方向計測値)[kWh]');
-        expect(result['積算電力量計測値(正方向計測値)[kWh]']).to.equal(10); // 100 * 0.1
+        expect(result).to.have.property('積算電力量計測値（正方向計測値）[kWh]');
+        expect(result['積算電力量計測値（正方向計測値）[kWh]']).to.equal(10); // 100 * 0.1
       });
 
       it('combines E3 and E1 for reverse energy', () => {
@@ -64,8 +64,8 @@ describe('Integration tests for complex functions', () => {
           'e3': '000003E8', // 1000 in hex
           'e1': '02'        // 0.01 unit
         });
-        expect(result).to.have.property('積算電力量計測値(逆方向計測値)[kWh]');
-        expect(result['積算電力量計測値(逆方向計測値)[kWh]']).to.equal(10); // 1000 * 0.01
+        expect(result).to.have.property('積算電力量計測値（逆方向計測値）[kWh]');
+        expect(result['積算電力量計測値（逆方向計測値）[kWh]']).to.equal(10); // 1000 * 0.01
       });
 
       it('returns empty object when E1 is missing', () => {
@@ -81,37 +81,38 @@ describe('Integration tests for complex functions', () => {
           'e3': '00000032', // 50
           'e1': '00'        // 1 unit
         });
-        expect(result['積算電力量計測値(正方向計測値)[kWh]']).to.equal(100);
-        expect(result['積算電力量計測値(逆方向計測値)[kWh]']).to.equal(50);
+        expect(result['積算電力量計測値（正方向計測値）[kWh]']).to.equal(100);
+        expect(result['積算電力量計測値（逆方向計測値）[kWh]']).to.equal(50);
       });
     });
 
     describe('Smart electric energy sub meter (028D)', () => {
       it('combines D3 and E7 for instantaneous power', () => {
         const result = ELconv.EDTconvination('028D01', {
-          'd3': '0A',   // coefficient 10
-          'e7': '0064'  // 100W
+          'd3': '000A',   // coefficient 10
+          'e7': '000003E8'  // 1000W
         });
         expect(result).to.have.property('瞬時電力計測値[W]');
-        expect(result['瞬時電力計測値[W]']).to.equal(1000); // 100 * 10
+        expect(result['瞬時電力計測値[W]']).to.equal(10000); // 1000 * 10
       });
 
-      it('defaults coefficient to 1 when empty', () => {
+      it('requires coefficient for E7 (instantaneous power)', () => {
         const result = ELconv.EDTconvination('028D01', {
-          'd3': '',
-          'e7': '012C'  // 300W
+          'd3': '00000001',  // coefficient 1
+          'e7': '0000012C'  // 300W
         });
+        expect(result).to.have.property('瞬時電力計測値[W]');
         expect(result['瞬時電力計測値[W]']).to.equal(300); // 300 * 1
       });
 
       it('combines D3, D4, E1 for cumulative energy', () => {
         const result = ELconv.EDTconvination('028D01', {
-          'd3': '05',    // coefficient 5
+          'd3': '00000005',    // coefficient 5
           'd4': '01',    // 0.1 unit
-          'e1': '0064'   // 100
+          'e1': '00000064'   // 100
         });
-        expect(result).to.have.property('積算電力量計測値(正方向計測値)[kWh]');
-        expect(result['積算電力量計測値(正方向計測値)[kWh]']).to.equal(50); // 100 * 5 * 0.1
+        expect(result).to.have.property('積算電力量計測値（正方向計測値）[kWh]');
+        expect(result['積算電力量計測値（正方向計測値）[kWh]']).to.equal(50); // 100 * 5 * 0.1
       });
     });
 

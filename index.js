@@ -1289,11 +1289,6 @@ ELconv.EDTconvination = function ( eoj, epcs ) {
 			let pow = parseInt( epcs['e3'], 16 ) * coefficient * parseFloat( unit );
 			ret['積算電力量計測値（逆方向計測値）[kWh]'] = pow;
 		}
-		if( epcs['d3'] && epcs['e7'] ) {
-			let coefficient = epcs['d3']=='' ? 1 : parseInt( epcs['d3'], 16 );
-			let pow = parseInt( epcs['e7'], 16 ) * coefficient * parseFloat( coefficient );
-			ret['瞬時電力計測値[W]'] = pow;
-		}
 		if( epcs['d3'] && epcs['d4'] && epcs['ea'] ) {
 			let coefficient = epcs['d3']=='' ? 1 : parseInt( epcs['d3'], 16 );
 			let contentRule = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)].epcs['0xD4'].edt[0].content;

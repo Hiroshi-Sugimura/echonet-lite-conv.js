@@ -107,13 +107,13 @@ describe('Utility helper functions', () => {
       expect(out[1]).to.equal(0x80);
     });
     it('handles multiple EPCs', () => {
-      // First 3 bits set: 0x80, 0x81, 0x82
-      const input = [0, 0x07, ...Array(15).fill(0)]; // 0b111
+      // First 3 bits set: 0x80, 0x90, 0xA0 (bit 0 of bytes 1, 2, 3)
+      const input = [0, 0x07, ...Array(15).fill(0)]; // 0b00000111
       const out = ELconv.parseMapForm2(input);
       expect(out[0]).to.equal(3); // count
       expect(out).to.include(0x80);
-      expect(out).to.include(0x81);
-      expect(out).to.include(0x82);
+      expect(out).to.include(0x90);
+      expect(out).to.include(0xA0);
     });
     it('handles no properties', () => {
       const input = Array(17).fill(0);
