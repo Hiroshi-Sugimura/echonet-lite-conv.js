@@ -18,7 +18,10 @@ let ELconv = {
 };
 
 
-// 辞書の読み込み
+/**
+ * 辞書ファイルを読み込んで初期化する
+ * ノードプロファイル、スーパークラス、デバイスオブジェクト、メーカーコードの辞書を読み込む
+ */
 ELconv.initialize = function () {
 	// 本来はすべての辞書をもって，条件分けすべき
 	// ELconv.m_dictNod = JSON.parse( fs.readFileSync('./node_modules/echonet-lite-conv/Spec_1.11/nodeProfile.json', 'utf8') );
@@ -41,14 +44,22 @@ ELconv.initialize = function () {
 // 変換系/内部関数
 //////////////////////////////////////////////////////////////////////
 
-// 1バイトを文字列の16進表現へ（1Byteは必ず2文字にする）
+/**
+ * 1バイトを文字列の16進表現へ変換(1Byteは必ず2文字にする)
+ * @param {number} byte - 変換する1バイトの数値
+ * @returns {string} 2文字の16進数文字列
+ */
 ELconv.toHexString = function( byte ) {
 	// 文字列0をつなげて，後ろから2文字分スライスする
 	return ( ('0' + byte.toString(16)).slice(-2) );
 };
 
 
-// 2進表現の文字列を数値のバイト配列へ
+/**
+ * 16進表現の文字列を数値のバイト配列へ変換
+ * @param {string} string - 16進数の文字列
+ * @returns {number[]} バイト配列
+ */
 ELconv.toHexArray = function( string ) {
 	let ret = [];
 	let i, l, r;
@@ -62,7 +73,11 @@ ELconv.toHexArray = function( string ) {
 	return ret;
 };
 
-// contentType = customType
+/**
+ * 年月データを文字列に変換 (Year(2byte), Month(1byte))
+ * @param {string} yym - 年月の16進数文字列
+ * @returns {string} 'YYYY.M'形式の文字列
+ */
 ELconv.YYMtoString = function( yym ) {  // Year(2byte), Month(1byte)
 	let yy, m;
 	yy = yym.substr( 0, 4 );
@@ -70,6 +85,11 @@ ELconv.YYMtoString = function( yym ) {  // Year(2byte), Month(1byte)
 	return parseInt( yy, 16 ) + '.' + parseInt( m, 16);
 };
 
+/**
+ * 年月日データを文字列に変換 (Year(2byte), Month(1byte), Day(1byte))
+ * @param {string} yymd - 年月日の16進数文字列
+ * @returns {string} 'YYYY.M.D'形式の文字列
+ */
 ELconv.YYMDtoString = function( yymd ) { // Year(2byte), Month(1byte), Day(1byte)
 	let yy, m, d;
 	yy = yymd.substr( 0, 4 );
@@ -78,6 +98,11 @@ ELconv.YYMDtoString = function( yymd ) { // Year(2byte), Month(1byte), Day(1byte
 	return parseInt( yy, 16 ) + '.' + parseInt( m, 16) + '.' + parseInt( d, 16);
 };
 
+/**
+ * 時分データを文字列に変換 (Hour(1byte), Minute(1byte))
+ * @param {string} hm - 時分の16進数文字列
+ * @returns {string} 'H.M'形式の文字列
+ */
 ELconv.HMtoString = function( hm ) {  // Hour(1byte), Minute(1byte)
 	let h, m;
 	h = hm.substr( 0, 2 );
@@ -85,6 +110,11 @@ ELconv.HMtoString = function( hm ) {  // Hour(1byte), Minute(1byte)
 	return parseInt( h, 16 ) + '.' + parseInt( m, 16);
 };
 
+/**
+ * 時分秒データを文字列に変換 (Hour(1byte), Minute(1byte), Second(1byte))
+ * @param {string} hms - 時分秒の16進数文字列
+ * @returns {string} 'H.M.S'形式の文字列
+ */
 ELconv.HMStoString = function( hms ) { // Hour(1byte), Minute(1byte), Second(1byte)
 	let h, m, s;
 	h = hms.substr( 0, 2 );
@@ -93,6 +123,11 @@ ELconv.HMStoString = function( hms ) { // Hour(1byte), Minute(1byte), Second(1by
 	return parseInt( h, 16 ) + '.' + parseInt( m, 16) + '.' + parseInt( s, 16);
 };
 
+/**
+ * 時分フレームデータを文字列に変換 (Hour(1byte), Minute(1byte), Frame(1byte))
+ * @param {string} hmf - 時分フレームの16進数文字列
+ * @returns {string} 'H.M.F'形式の文字列
+ */
 ELconv.HMFtoString = function( hmf ) { // Hour(1byte), Minute(1byte), Frame(1byte)
 	let h, m, f;
 	h = hmf.substr( 0, 2 );
@@ -101,6 +136,11 @@ ELconv.HMFtoString = function( hmf ) { // Hour(1byte), Minute(1byte), Frame(1byt
 	return parseInt( h, 16 ) + '.' + parseInt( m, 16) + '.' + parseInt( f, 16);
 };
 
+/**
+ * 分秒データを文字列に変換 (Minute(1byte), Second(1byte))
+ * @param {string} ms - 分秒の16進数文字列
+ * @returns {string} 'M.S'形式の文字列
+ */
 ELconv.MStoString = function( ms ) {  // Minute(1byte), Second(1byte)
 	let m, s;
 	m = ms.substr( 0, 2 );
@@ -108,12 +148,21 @@ ELconv.MStoString = function( ms ) {  // Minute(1byte), Second(1byte)
 	return parseInt( m, 16 ) + '.' + parseInt( s, 16);
 };
 
-// rawData
+/**
+ * 16進数文字列をShift_JIS文字列に変換
+ * @param {string} hexString - 16進数文字列
+ * @returns {string} Shift_JISでデコードされた文字列
+ */
 ELconv.HEXStringtoShiftJIS = function( hexString ) {
 	let array = ELconv.toHexArray( hexString );
 	return ( Encoding.codeToString(Encoding.convert(array)) );
 };
 
+/**
+ * 16進数文字列をASCII文字列に変換
+ * @param {string} hexString - 16進数文字列
+ * @returns {string} ASCIIでデコードされた文字列(null文字を除去)
+ */
 ELconv.HEXStringtoASCII = function( hexString ) {
 	let array = ELconv.toHexArray( hexString );
 	let ret = Buffer(array).toString('ASCII');
@@ -121,6 +170,12 @@ ELconv.HEXStringtoASCII = function( hexString ) {
 };
 
 
+/**
+ * ビットマップデータを文字列に変換
+ * @param {string} edt - EDTの16進数文字列
+ * @param {Array} typeArray - ビット名と値のマッピング配列
+ * @returns {string} 各ビットの状態を示す文字列
+ */
 ELconv.BITMAPtoString = function( edt, typeArray ) {
 	let ret = '';
 	let x = parseInt( edt );
@@ -134,7 +189,11 @@ ELconv.BITMAPtoString = function( edt, typeArray ) {
 };
 
 
-// Byte列文字列を2文字づつスペース区切り
+/**
+ * バイト列文字列を2文字づつスペース区切りにする
+ * @param {string} bytestring - バイト列の文字列
+ * @returns {string} スペース区切りの文字列
+ */
 ELconv.ByteStringSeparater = function( bytestring ) {
 	if( bytestring == null ) {
 		return '';
@@ -150,7 +209,11 @@ ELconv.ByteStringSeparater = function( bytestring ) {
 };
 
 
-// EOJを文字列へ
+/**
+ * EOJ(ECHONET Lite Object)を人間が読める文字列に変換
+ * @param {string} eoj - EOJの16進数文字列
+ * @returns {string} EOJの名称または元の文字列
+ */
 ELconv.refEOJ = function(eoj) {
 	let ret = eoj = eoj.toUpperCase();
 	if( eoj.substr(0,4) == '0EF0' ) {
@@ -163,7 +226,12 @@ ELconv.refEOJ = function(eoj) {
 };
 
 
-// EPCを文字列へ
+/**
+ * EPC(ECHONET Lite Property)を人間が読める文字列に変換
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {string} epc - EPCの16進数文字列
+ * @returns {string} EPCの名称または元の文字列
+ */
 ELconv.refEPC = function(eoj, epc) {
 	eoj = eoj.toUpperCase();
 	let ret = epc = epc.toUpperCase();
@@ -201,7 +269,13 @@ ELconv.refEPC = function(eoj, epc) {
 // other(referSpec)
 //////////////////////////////////////////////////////////////////////
 
-// referSpecをEOJとEPCで振り分け
+/**
+ * 特殊なEPCの仕様に基づいてEDTを解析
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {string} epc - EPCの16進数文字列
+ * @param {string} edt - EDTの16進数文字列
+ * @returns {string} 解析されたEDTの文字列表現
+ */
 ELconv.selectReferSpec = function( eoj, epc, edt ) {
 	let ret;
 	eoj = eoj.toUpperCase();
@@ -226,8 +300,13 @@ ELconv.selectReferSpec = function( eoj, epc, edt ) {
 };
 
 
-//------------------
-// 設置場所
+/**
+ * EPC 0x81 設置場所の解析
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {string} epc - EPCの16進数文字列
+ * @param {string} edt - EDTの16進数文字列
+ * @returns {string} 設置場所の文字列表現
+ */
 ELconv.referSpec81 = function(eoj, epc, edt) {
 	let ret;
 	eoj = eoj.toUpperCase();
@@ -339,8 +418,13 @@ ELconv.referSpec81 = function(eoj, epc, edt) {
 	return (ret);
 };
 
-//------------------
-// Version情報
+/**
+ * EPC 0x82 Version情報の解析
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {string} epc - EPCの16進数文字列
+ * @param {string} edt - EDTの16進数文字列
+ * @returns {string} バージョン情報の文字列表現
+ */
 ELconv.referSpec82 = function ( eoj, epc, edt) {
 	let ret = '';
 	eoj = eoj.toUpperCase();
@@ -375,8 +459,13 @@ ELconv.referSpec82 = function ( eoj, epc, edt) {
 };
 
 
-//------------------
-// メーカコード
+/**
+ * EPC 0x8A メーカーコードの解析
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {string} epc - EPCの16進数文字列
+ * @param {string} edt - EDTの16進数文字列
+ * @returns {string} メーカー名の文字列表現
+ */
 ELconv.referSpec8A = function(eoj, epc, edt) {
 	edt = edt.toUpperCase();
 
@@ -391,8 +480,13 @@ ELconv.referSpec8A = function(eoj, epc, edt) {
 };
 
 
-//------------------
-// プロパティマップ 9D, 9E, 9Fを解析する。下記のフォーム2とセットで
+/**
+ * EPC 0x9D, 0x9E, 0x9F プロパティマップの解析
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {string} epc - EPCの16進数文字列
+ * @param {string} edt - EDTの16進数文字列
+ * @returns {string} プロパティマップの文字列表現
+ */
 ELconv.referSpec9D9E9F = function(eoj, epc, edt) {
 	let ret = '';
 	let array = ELconv.toHexArray( edt );
@@ -416,8 +510,12 @@ ELconv.referSpec9D9E9F = function(eoj, epc, edt) {
 	return ret;
 };
 
-// parse Propaty Map Form 2
-// 16以上のプロパティ数の時，記述形式2，出力はForm1にすること
+/**
+ * プロパティマップの記述形式2を解析してForm1に変換
+ * 16以上のプロパティ数の時に使用
+ * @param {number[]} array - バイト配列
+ * @returns {number[]} Form1形式のプロパティ配列
+ */
 ELconv.parseMapForm2 = function( array ) {
 	let ret = [];
 	let val = 0x80;
@@ -439,9 +537,13 @@ ELconv.parseMapForm2 = function( array ) {
 };
 
 
-//////////////////////////////////////////////////////////////////////
-// 分電盤メータリング 0287
-//////////////////////////////////////////////////////////////////////
+/**
+ * 分電盤メータリング(0x0287) EPC 0xC2 積算電力量計測単位の解析
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {string} epc - EPCの16進数文字列
+ * @param {string} edt - EDTの16進数文字列
+ * @returns {number} 計測単位の係数
+ */
 ELconv.distributionBoardC2 = function ( eoj, epc, edt) {
 	let ret = 0.001; // default, 0.001kWh
 	switch(edt) {
@@ -477,17 +579,26 @@ ELconv.distributionBoardC2 = function ( eoj, epc, edt) {
 };
 
 
-// 積算電力量計測チャンネル範囲指定（片方向） B2
-// 瞬時電流計測チャンネル範囲指定（片方向） B4
-// 瞬時電力計測チャンネル範囲指定（片方向） B6
-// 積算電力量計測チャンネル範囲指定（双方向） B9
-// 瞬時電流計測チャンネル範囲指定（双方向） BB
-// 瞬時電力計測チャンネル範囲指定（双方向） BD
+/**
+ * 分電盤メータリング チャンネル範囲指定の解析
+ * EPC: 0xB2, 0xB4, 0xB6, 0xB9, 0xBB, 0xBD
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {string} epc - EPCの16進数文字列
+ * @param {string} edt - EDTの16進数文字列
+ * @returns {string} チャンネル範囲の文字列表現
+ */
 ELconv.distributionBoardB2B4B6B9BBBD = function ( eoj, epc, edt) {
 	return edt.substr(0,2) + 'ch-' + edt.substr(2,4) + 'ch' + '(' + ELconv.ByteStringSeparater(edt) + ')';
 };
 
-// 積算電力量計測値リスト（片方向） B3 単位がC2に依存する
+/**
+ * 分電盤メータリング EPC 0xB3 積算電力量計測値リスト(片方向)
+ * 単位がC2に依存する
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {string} epc - EPCの16進数文字列
+ * @param {string} edt - EDTの16進数文字列
+ * @returns {string} 積算電力量のJSON文字列
+ */
 ELconv.distributionBoardB3 = function ( eoj, epc, edt) {
 	let edtHexArray = ELconv.toHexArray( edt );
 	let begin = edtHexArray[0];
@@ -502,7 +613,14 @@ ELconv.distributionBoardB3 = function ( eoj, epc, edt) {
 	return JSON.stringify(ret) + '(' + ELconv.ByteStringSeparater(edt) +')';
 };
 
-// 瞬時電流計測値リスト（片方向） B5 0.1A
+/**
+ * 分電盤メータリング EPC 0xB5 瞬時電流計測値リスト(片方向)
+ * 単位: 0.1A
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {string} epc - EPCの16進数文字列
+ * @param {string} edt - EDTの16進数文字列
+ * @returns {string} 瞬時電流のJSON文字列
+ */
 ELconv.distributionBoardB5 = function ( eoj, epc, edt) {
 	let edtHexArray = ELconv.toHexArray( edt );
 	let begin = edtHexArray[0];
@@ -517,7 +635,14 @@ ELconv.distributionBoardB5 = function ( eoj, epc, edt) {
 	return JSON.stringify(ret) + '(' + ELconv.ByteStringSeparater(edt) +')';
 };
 
-// 瞬時電力計測値リスト（片方向） B7 1W
+/**
+ * 分電盤メータリング EPC 0xB7 瞬時電力計測値リスト(片方向)
+ * 単位: 1W
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {string} epc - EPCの16進数文字列
+ * @param {string} edt - EDTの16進数文字列
+ * @returns {string} 瞬時電力のJSON文字列
+ */
 ELconv.distributionBoardB7 = function ( eoj, epc, edt) {
 	let edtHexArray = ELconv.toHexArray( edt );
 	let begin = edtHexArray[0];
@@ -532,7 +657,14 @@ ELconv.distributionBoardB7 = function ( eoj, epc, edt) {
 	return JSON.stringify(ret) + '(' + ELconv.ByteStringSeparater(edt) +')';
 };
 
-// 積算電力量計測値リスト（双方向） BA Wh 単位はC2に従う
+/**
+ * 分電盤メータリング EPC 0xBA 積算電力量計測値リスト(双方向)
+ * 単位はC2に従う
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {string} epc - EPCの16進数文字列
+ * @param {string} edt - EDTの16進数文字列
+ * @returns {string} 積算電力量のJSON文字列(正逆両方向)
+ */
 ELconv.distributionBoardBA = function ( eoj, epc, edt) {
 	let edtHexArray = ELconv.toHexArray( edt );
 	let begin = edtHexArray[0];
@@ -549,7 +681,14 @@ ELconv.distributionBoardBA = function ( eoj, epc, edt) {
 	return JSON.stringify(ret) + '(' + ELconv.ByteStringSeparater(edt) +')';
 };
 
-// 瞬時電流計測値リスト（双方向） BC 0.1A
+/**
+ * 分電盤メータリング EPC 0xBC 瞬時電流計測値リスト(双方向)
+ * 単位: 0.1A
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {string} epc - EPCの16進数文字列
+ * @param {string} edt - EDTの16進数文字列
+ * @returns {string} 瞬時電流のJSON文字列(R相/T相)
+ */
 ELconv.distributionBoardBC = function ( eoj, epc, edt) {
 	let edtHexArray = ELconv.toHexArray( edt );
 	let begin = edtHexArray[0];
@@ -566,7 +705,14 @@ ELconv.distributionBoardBC = function ( eoj, epc, edt) {
 	return JSON.stringify(ret) + '(' + ELconv.ByteStringSeparater(edt) +')';
 };
 
-// 瞬時電力計測値リスト（双方向） BE W
+/**
+ * 分電盤メータリング EPC 0xBE 瞬時電力計測値リスト(双方向)
+ * 単位: W
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {string} epc - EPCの16進数文字列
+ * @param {string} edt - EDTの16進数文字列
+ * @returns {string} 瞬時電力のJSON文字列
+ */
 ELconv.distributionBoardBE = function ( eoj, epc, edt) {
 	let edtHexArray = ELconv.toHexArray( edt );
 	let begin = edtHexArray[0];
@@ -581,10 +727,13 @@ ELconv.distributionBoardBE = function ( eoj, epc, edt) {
 	return JSON.stringify(ret) + '(' + ELconv.ByteStringSeparater(edt) +')';
 };
 
-//////////////////////////////////////////////////////////////////////
-// 低圧スマート電力量メータクラス 0288
-//////////////////////////////////////////////////////////////////////
-// 瞬時電流計測値 E8
+/**
+ * 低圧スマート電力量メータ(0x0288) EPC 0xE8 瞬時電流計測値の解析
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {string} epc - EPCの16進数文字列
+ * @param {string} edt - EDTの16進数文字列
+ * @returns {string} 瞬時電流のJSON文字列(R相/T相)
+ */
 ELconv.lowVoltageSmartElectricEnergyMeterE8 = function (eoj, epc, edt) {
 	let rPhase = edt.substr(0,4);
 	let tPhase = edt.substr(4,4);
@@ -601,7 +750,13 @@ ELconv.lowVoltageSmartElectricEnergyMeterE8 = function (eoj, epc, edt) {
 	return JSON.stringify(ret) + '(' + ELconv.ByteStringSeparater(edt) +')';
 };
 
-// 定時積算電力量計測値（正方向計測値＝EA、逆方法計測値＝EB）
+/**
+ * 低圧スマート電力量メータ EPC 0xEA/0xEB 定時積算電力量計測値の解析
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {string} epc - EPCの16進数文字列(0xEA:正方向, 0xEB:逆方向)
+ * @param {string} edt - EDTの16進数文字列
+ * @returns {string} 定時積算電力量の文字列表現
+ */
 ELconv.lowVoltageSmartElectricEnergyMeterEAEB = function (eoj, epc, edt) {
 	// 12 34 56 78 90 12 34 56
 	// 07 E6 06 0F 11 1E 00 00 0B 94 60
@@ -619,10 +774,13 @@ ELconv.lowVoltageSmartElectricEnergyMeterEAEB = function (eoj, epc, edt) {
 	return ret + '(' + ELconv.ByteStringSeparater(edt) +')';
 };
 
-//////////////////////////////////////////////////////////////////////
-// スマート電力量サブメータクラス 028D
-//////////////////////////////////////////////////////////////////////
-// 瞬時電流計測値 E8
+/**
+ * スマート電力量サブメータ(0x028D) EPC 0xE8 瞬時電流計測値の解析
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {string} epc - EPCの16進数文字列
+ * @param {string} edt - EDTの16進数文字列
+ * @returns {string} 瞬時電流のJSON文字列(R相/T相)
+ */
 ELconv.smartElectricEnergySubMeterE8 = function (eoj, epc, edt) {
 	let rPhase = edt.substr(0,4);
 	let tPhase = edt.substr(4,4);
@@ -639,7 +797,13 @@ ELconv.smartElectricEnergySubMeterE8 = function (eoj, epc, edt) {
 	return JSON.stringify(ret) + '(' + ELconv.ByteStringSeparater(edt) +')';
 };
 
-// 瞬時電圧計測値 E9
+/**
+ * スマート電力量サブメータ EPC 0xE9 瞬時電圧計測値の解析
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {string} epc - EPCの16進数文字列
+ * @param {string} edt - EDTの16進数文字列
+ * @returns {string} 瞬時電圧のJSON文字列(R-S/S-T)
+ */
 ELconv.smartElectricEnergySubMeterE9 = function (eoj, epc, edt) {
 	let rPhase = edt.substr(0,4);
 	let tPhase = edt.substr(4,4);
@@ -656,7 +820,13 @@ ELconv.smartElectricEnergySubMeterE9 = function (eoj, epc, edt) {
 	return JSON.stringify(ret) + '(' + ELconv.ByteStringSeparater(edt) +')';
 };
 
-// 定時積算電力量計測値（正方向計測値＝EA、逆方法計測値＝EB）
+/**
+ * スマート電力量サブメータ EPC 0xEA/0xEB 定時積算電力量計測値の解析
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {string} epc - EPCの16進数文字列(0xEA:正方向, 0xEB:逆方向)
+ * @param {string} edt - EDTの16進数文字列
+ * @returns {string} 定時積算電力量の文字列表現
+ */
 ELconv.smartElectricEnergySubMeterEAEB = function (eoj, epc, edt) {
 	// 12 34 56 78 90 12 34 56
 	// 07 E6 06 0F 11 1E 00 00 0B 94 60
@@ -679,7 +849,11 @@ ELconv.smartElectricEnergySubMeterEAEB = function (eoj, epc, edt) {
 // 変換系
 //////////////////////////////////////////////////////////////////////
 
-// ネットワーク内のEL機器全体情報を更新する
+/**
+ * ネットワーク内のECHONET Lite機器全体情報を参照し変換する
+ * @param {Object} facilities - 機器情報オブジェクト
+ * @param {Function} callback - 変換結果を受け取るコールバック関数
+ */
 ELconv.refer = function( facilities, callback ) {
 	let ret = {'IPs':[]};
 
@@ -707,11 +881,13 @@ ELconv.refer = function( facilities, callback ) {
 };
 
 
-//////////////////////////////////////////////////////////////////////
-// parse EDT
-// obj = facilities[ip][ eoj ][epc]
-// epc = facilities[ip][eoj][ epc ]
-// edt = facilities[ip][eoj][epc]
+/**
+ * EDT(ECHONET Lite Data)を解析して人間が読める形式に変換
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {string} epc - EPCの16進数文字列
+ * @param {string} edt - EDTの16進数文字列
+ * @returns {string} 解析されたEDTの文字列表現
+ */
 ELconv.parseEDT = function( eoj, epc, edt ) {
 	eoj = eoj.toUpperCase();
 	epc = epc.toUpperCase();
@@ -942,8 +1118,13 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 };
 
 
-// 複数のEOJが関連して意味をなすもの
-// かなり例外的に処理がある
+/**
+ * 複数のEPCが関連して意味をなすデータを組み合わせて解析
+ * 主に電力量計測関連の係数と値の組み合わせ処理
+ * @param {string} eoj - EOJの16進数文字列
+ * @param {Object} epcs - EPCとEDTのマッピングオブジェクト
+ * @returns {Object|null} 組み合わせ解析結果のオブジェクトまたはnull
+ */
 ELconv.EDTconvination = function ( eoj, epcs ) {
 	// console.log('# ELconv.EDTconvination', eoj, epcs);
 	eoj = eoj.toUpperCase();
@@ -1061,7 +1242,11 @@ ELconv.EDTconvination = function ( eoj, epcs ) {
 
 
 
-// ESVのマッピング
+/**
+ * ESV(ECHONET Lite Service)コードを文字列に変換
+ * @param {string} esv - ESVの16進数文字列
+ * @returns {string} ESVの名称
+ */
 ELconv.refESV = function(esv)  {
 	let esv_dict = {
 		"50": 'SETI_SNA',
@@ -1084,7 +1269,11 @@ ELconv.refESV = function(esv)  {
 };
 
 
-// elsを解析する
+/**
+ * ECHONET Lite電文(ELS)を解析して人間が読める形式に変換
+ * @param {Object} els - ECHONET Lite電文オブジェクト
+ * @param {Function} callback - 解析結果を受け取るコールバック関数
+ */
 ELconv.elsAnarysis = function( els, callback ) {
 
 	// 初期化していなかったら初期化する
