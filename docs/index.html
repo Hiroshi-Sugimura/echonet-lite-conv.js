@@ -29,7 +29,7 @@
 <nav >
     
     
-    <h2><a href="index.html">Home</a></h2>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-echonet-lite-conv.html">echonet-lite-conv</a><ul class='methods'><li data-type='method'><a href="module-echonet-lite-conv.html#.BITMAPtoString">BITMAPtoString</a></li><li data-type='method'><a href="module-echonet-lite-conv.html#.ByteStringSeparater">ByteStringSeparater</a></li><li data-type='method'><a href="module-echonet-lite-conv.html#.HEXStringtoASCII">HEXStringtoASCII</a></li><li data-type='method'><a href="module-echonet-lite-conv.html#.HEXStringtoShiftJIS">HEXStringtoShiftJIS</a></li><li data-type='method'><a href="module-echonet-lite-conv.html#.HMFtoString">HMFtoString</a></li><li data-type='method'><a href="module-echonet-lite-conv.html#.HMStoString">HMStoString</a></li><li data-type='method'><a href="module-echonet-lite-conv.html#.HMtoString">HMtoString</a></li><li data-type='method'><a href="module-echonet-lite-conv.html#.MStoString">MStoString</a></li><li data-type='method'><a href="module-echonet-lite-conv.html#.YYMDtoString">YYMDtoString</a></li><li data-type='method'><a href="module-echonet-lite-conv.html#.YYMtoString">YYMtoString</a></li><li data-type='method'><a href="module-echonet-lite-conv.html#.initialize">initialize</a></li><li data-type='method'><a href="module-echonet-lite-conv.html#.parseMapForm2">parseMapForm2</a></li><li data-type='method'><a href="module-echonet-lite-conv.html#.refEOJ">refEOJ</a></li><li data-type='method'><a href="module-echonet-lite-conv.html#.refEPC">refEPC</a></li><li data-type='method'><a href="module-echonet-lite-conv.html#.referSpec81">referSpec81</a></li><li data-type='method'><a href="module-echonet-lite-conv.html#.referSpec82">referSpec82</a></li><li data-type='method'><a href="module-echonet-lite-conv.html#.referSpec8A">referSpec8A</a></li><li data-type='method'><a href="module-echonet-lite-conv.html#.referSpec9D9E9F">referSpec9D9E9F</a></li><li data-type='method'><a href="module-echonet-lite-conv.html#.selectReferSpec">selectReferSpec</a></li><li data-type='method'><a href="module-echonet-lite-conv.html#.toHexArray">toHexArray</a></li><li data-type='method'><a href="module-echonet-lite-conv.html#.toHexString">toHexString</a></li></ul></li></ul><h3>Namespaces</h3><ul><li><a href="module-echonet-lite-conv-ELconv.html">ELconv</a><ul class='methods'><li data-type='method'><a href="module-echonet-lite-conv-ELconv.html#.EDTconvination">EDTconvination</a></li><li data-type='method'><a href="module-echonet-lite-conv-ELconv.html#.distributionBoardB2B4B6B9BBBD">distributionBoardB2B4B6B9BBBD</a></li><li data-type='method'><a href="module-echonet-lite-conv-ELconv.html#.distributionBoardB3">distributionBoardB3</a></li><li data-type='method'><a href="module-echonet-lite-conv-ELconv.html#.distributionBoardB5">distributionBoardB5</a></li><li data-type='method'><a href="module-echonet-lite-conv-ELconv.html#.distributionBoardB7">distributionBoardB7</a></li><li data-type='method'><a href="module-echonet-lite-conv-ELconv.html#.distributionBoardBA">distributionBoardBA</a></li><li data-type='method'><a href="module-echonet-lite-conv-ELconv.html#.distributionBoardBC">distributionBoardBC</a></li><li data-type='method'><a href="module-echonet-lite-conv-ELconv.html#.distributionBoardBE">distributionBoardBE</a></li><li data-type='method'><a href="module-echonet-lite-conv-ELconv.html#.distributionBoardC2">distributionBoardC2</a></li><li data-type='method'><a href="module-echonet-lite-conv-ELconv.html#.elsAnarysis">elsAnarysis</a></li><li data-type='method'><a href="module-echonet-lite-conv-ELconv.html#.lowVoltageSmartElectricEnergyMeterE8">lowVoltageSmartElectricEnergyMeterE8</a></li><li data-type='method'><a href="module-echonet-lite-conv-ELconv.html#.lowVoltageSmartElectricEnergyMeterEAEB">lowVoltageSmartElectricEnergyMeterEAEB</a></li><li data-type='method'><a href="module-echonet-lite-conv-ELconv.html#.parseEDT">parseEDT</a></li><li data-type='method'><a href="module-echonet-lite-conv-ELconv.html#.refESV">refESV</a></li><li data-type='method'><a href="module-echonet-lite-conv-ELconv.html#.refer">refer</a></li><li data-type='method'><a href="module-echonet-lite-conv-ELconv.html#.smartElectricEnergySubMeterE8">smartElectricEnergySubMeterE8</a></li><li data-type='method'><a href="module-echonet-lite-conv-ELconv.html#.smartElectricEnergySubMeterE9">smartElectricEnergySubMeterE9</a></li><li data-type='method'><a href="module-echonet-lite-conv-ELconv.html#.smartElectricEnergySubMeterEAEB">smartElectricEnergySubMeterEAEB</a></li></ul></li></ul>
     
 </nav>
 
@@ -79,17 +79,40 @@ package.jsonが自動的にインストールしてくれる予定です．</p>
 The package.json will solve dependencies.</p>
 <h2>Unit Test / 単体テスト</h2>
 <p>このリポジトリには <code>unitTest/</code> フォルダに Mocha + Chai のテストを配置しています。</p>
-<p>Run tests / テスト実行:</p>
-<pre class="prettyprint source"><code>npm install
+<h3>Run tests / テスト実行:</h3>
+<pre class="prettyprint source lang-bash"><code>npm install
 npm test
 </code></pre>
-<p>テスト追加方法 / How to add tests:</p>
+<h3>テストファイル構成 / Test Files Structure:</h3>
+<ul>
+<li><strong>basic.spec.js</strong>: 基本的なユーティリティ関数のテスト (toHexString, toHexArray, 日時変換関数など)</li>
+<li><strong>utils.spec.js</strong>: ヘルパー関数のテスト (ASCII/ShiftJIS変換, ビットマップ, プロパティマップなど)</li>
+<li><strong>parseEDT.spec.js</strong>: EDT解析とEOJ/EPC参照関数のテスト</li>
+<li><strong>distribution.spec.js</strong>: 分電盤メータリング(0x0287)関連のテスト</li>
+<li><strong>smartMeter.spec.js</strong>: スマート電力量メータ(0x0288, 0x028D)関連のテスト</li>
+<li><strong>error.spec.js</strong>: エラーハンドリングとエッジケースのテスト</li>
+<li><strong>integration.spec.js</strong>: 統合テスト (EDTconvination, refer関数など)</li>
+</ul>
+<h3>テスト追加方法 / How to add tests:</h3>
 <ol>
-<li><code>unitTest/</code> に <code>*.spec.js</code> という名前でファイルを作成。</li>
-<li><code>const { expect } = require('chai');</code> を使い <code>expect</code> アサーションで記述。</li>
-<li><code>npm test</code> で確認。</li>
+<li><code>unitTest/</code> に <code>*.spec.js</code> という名前でファイルを作成</li>
+<li><code>const { expect } = require('chai');</code> を使い <code>expect</code> アサーションで記述</li>
+<li><code>npm test</code> で確認</li>
 </ol>
 <p>最初のサンプルは <code>unitTest/basic.spec.js</code> を参考にしてね。</p>
+<h3>テストカバレッジ / Test Coverage:</h3>
+<p>現在のテストでは以下の機能をカバーしています:</p>
+<ul>
+<li>✅ 16進数変換 (toHexString, toHexArray)</li>
+<li>✅ 日時フォーマット変換 (YYMD, HMS, HMF, MS)</li>
+<li>✅ 文字エンコーディング変換 (ASCII, Shift_JIS)</li>
+<li>✅ ビットマップ・プロパティマップ解析</li>
+<li>✅ EOJ/EPC参照とEDT解析</li>
+<li>✅ 分電盤メータリング各種EPC</li>
+<li>✅ スマート電力量メータ各種EPC</li>
+<li>✅ エラーハンドリングとエッジケース</li>
+<li>✅ 統合テスト (複数EPCの組み合わせ処理)</li>
+</ul>
 <h2>Demos</h2>
 <p>下記のように使えます．</p>
 <p>An example of a script is following:</p>
@@ -340,7 +363,7 @@ console.log( edt );
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Sat Dec 27 2025 14:11:46 GMT+0000 (Coordinated Universal Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Sat Dec 27 2025 14:20:35 GMT+0000 (Coordinated Universal Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>
