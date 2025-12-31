@@ -990,20 +990,20 @@ ELconv.smartElectricEnergySubMeterEAEB = function (eoj, epc, edt) {
 ELconv.refer = function( facilities, callback ) {
 	let ret = {'IPs':[]};
 
-	Object.keys( facilities ).forEach( function (ip) { // ip
+	Object.keys( facilities || {} ).forEach( function (ip) { // ip
 		ret.IPs.push(ip);
 		ret[ip] = {'EOJs': []}
-		Object.keys( facilities[ip] ).forEach( function (eoj) { // eoj
+		Object.keys( facilities[ip] || {} ).forEach( function (eoj) { // eoj
 			let retEoj = ELconv.refEOJ(eoj) + '(' + eoj + ')';
 			ret[ip].EOJs.push( retEoj );
 			ret[ip][retEoj] = { 'EPCs': [] };
-			Object.keys( facilities[ip][eoj] ).forEach( function (epc) { // epc
+			Object.keys( (facilities[ip] &amp;&amp; facilities[ip][eoj]) ? facilities[ip][eoj] : {} ).forEach( function (epc) { // epc
 				let retEpc = ELconv.refEPC(eoj, epc);
 				ret[ip][retEoj].EPCs.push(retEpc);
-				ret[ip][retEoj][retEpc] = ELconv.parseEDT( eoj, epc, facilities[ip][eoj][epc] ); //edt
+				ret[ip][retEoj][retEpc] = ELconv.parseEDT( eoj, epc, (facilities[ip] &amp;&amp; facilities[ip][eoj]) ? facilities[ip][eoj][epc] : '' ); //edt
 			});
 
-			let conboEdt = ELconv.EDTconvination( eoj, facilities[ip][eoj] );
+			let conboEdt = ELconv.EDTconvination( eoj, (facilities[ip] ? facilities[ip][eoj] : null) );
 			if( conboEdt ) {
 				ret[ip].Means = conboEdt;
 			}
@@ -1038,28 +1038,31 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 		return ret;
 	}
 
-	// スーパークラスにあるか？
-	if( undefined != ELconv.m_dictSup.elObjects['0x0000'].epcs['0x'+epc] ) { // 指定のEPCはあるか？あればまず確保，機器固有があれば上書き
-		contentRule = ELconv.m_dictSup.elObjects['0x0000'].epcs['0x'+epc].edt[0].content;
+	// スーパークラスにあるか？（ガード付き）
+	const supObj = ELconv.m_dictSup?.elObjects?.['0x0000']?.epcs?.['0x'+epc]?.edt?.[0]?.content;
+	if (supObj) {
+		contentRule = supObj;
 	}
 
 	if( eoj.substr(0, 4) == '0EF0' ) {  // node profile object
-		let devProps = ELconv.m_dictNod.elObjects['0x'+eoj.substr(0, 4)];
-		if( '0x'+epc in devProps.epcs ) { // 指定のEPCはあるか？
-			contentRule = ELconv.m_dictNod.elObjects['0x'+eoj.substr(0, 4)].epcs['0x'+epc].edt[0].content;
+		const devProps = ELconv.m_dictNod?.elObjects?.['0x'+eoj.substr(0, 4)];
+		if( devProps?.epcs &amp;&amp; ('0x'+epc) in devProps.epcs ) { // 指定のEPCはあるか？
+			const nodObj = ELconv.m_dictNod?.elObjects?.['0x'+eoj.substr(0, 4)]?.epcs?.['0x'+epc]?.edt?.[0]?.content;
+			if (nodObj) contentRule = nodObj;
 		}
 	}
 
 	// 各機器固有のEPCか？
-	if( ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)] ) {  // 指定のEOJはあるか？
-		let devProps = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)];
-		if( '0x'+epc in devProps.epcs ) { // 指定のEPCはあるか？
-			contentRule = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)].epcs['0x'+epc].edt[0].content;
+	if( ELconv.m_dictDev?.elObjects?.['0x'+eoj.substr(0, 4)] ) {  // 指定のEOJはあるか？
+		const devProps = ELconv.m_dictDev?.elObjects?.['0x'+eoj.substr(0, 4)];
+		if( devProps?.epcs &amp;&amp; ('0x'+epc) in devProps.epcs ) { // 指定のEPCはあるか？
+			const devObj = ELconv.m_dictDev?.elObjects?.['0x'+eoj.substr(0, 4)]?.epcs?.['0x'+epc]?.edt?.[0]?.content;
+			if (devObj) contentRule = devObj;
 		}
 	}
 
 	// 1.content typeをみてみる
-	for (let contentType in contentRule) {
+	for (let contentType in (contentRule || {})) {
 		switch (contentType){
 			case 'rawData':				// rawData
 			switch (contentRule.rawData) {
@@ -1154,7 +1157,7 @@ ELconv.parseEDT = function( eoj, epc, edt ) {
 	}
 
 	// 2.keyValuesを持つときはそちらを優先するが，undefinedの時は値を更新しない
-	for (let contentType in contentRule) {
+	for (let contentType in (contentRule || {})) {
 		if( contentType == 'keyValues' ) {
 
 			if( epc=='D6' ) {			// 3.keyValuesの特殊な形として，自ノードインスタンスリストSを解決する
@@ -1270,40 +1273,44 @@ ELconv.EDTconvination = function ( eoj, epcs ) {
 	// 低圧スマート電力量メータ(0288)
 	if( eoj.substr(0,4) === '0288' ) {
 		if( epcs['e0'] &amp;&amp; epcs['e1'] ) {
-			let contentRule = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)].epcs['0xE1'].edt[0].content;
-			let coefficient = contentRule.keyValues['0x' + epcs['e1']];
-			let pow = parseInt( epcs['e0'], 16 ) * parseFloat( coefficient );
-			ret['積算電力量計測値（正方向計測値）[kWh]'] = pow;
+			const contentRule = ELconv.m_dictDev?.elObjects?.['0x'+eoj.substr(0, 4)]?.epcs?.['0xE1']?.edt?.[0]?.content;
+			const coefficientStr = contentRule?.keyValues?.['0x' + epcs['e1']];
+			if (coefficientStr != null) {
+				const pow = parseInt( epcs['e0'], 16 ) * parseFloat( coefficientStr );
+				ret['積算電力量計測値（正方向計測値）[kWh]'] = pow;
+			}
 		}
 		if( epcs['e3'] &amp;&amp; epcs['e1'] ) {
-			let contentRule = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)].epcs['0xE1'].edt[0].content;
-			let coefficient = contentRule.keyValues['0x' + epcs['e1']];
-			let pow = parseInt( epcs['e3'], 16 ) * parseFloat( coefficient );
-			ret['積算電力量計測値（逆方向計測値）[kWh]'] = pow;
+			const contentRule = ELconv.m_dictDev?.elObjects?.['0x'+eoj.substr(0, 4)]?.epcs?.['0xE1']?.edt?.[0]?.content;
+			const coefficientStr = contentRule?.keyValues?.['0x' + epcs['e1']];
+			if (coefficientStr != null) {
+				const pow = parseInt( epcs['e3'], 16 ) * parseFloat( coefficientStr );
+				ret['積算電力量計測値（逆方向計測値）[kWh]'] = pow;
+			}
 		}
 		if( epcs['ea'] &amp;&amp; epcs['e1'] ) {
-			let contentRule = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)].epcs['0xE1'].edt[0].content;
-			let coefficient = contentRule.keyValues['0x' + epcs['e1']];
-
-			let yymd = ELconv.YYMDtoString( epcs['ea'].substr(0,8) );
-			let hms  = ELconv.HMStoString( epcs['ea'].substr(8,6) );
-			let pow  = parseInt( epcs['ea'].substr(14,20), 16) * parseFloat( coefficient );
-			let dt = new Date( yymd.split('.')[0], yymd.split('.')[1]-1, yymd.split('.')[2],
-							   hms.split('.')[0], hms.split('.')[1], hms.split('.')[2]);
-
-			ret['定時積算電力量計測値正方向'] = {'日時': dt.toISOString(), '計測値[kWh]':pow};
+			const contentRule = ELconv.m_dictDev?.elObjects?.['0x'+eoj.substr(0, 4)]?.epcs?.['0xE1']?.edt?.[0]?.content;
+			const coefficientStr = contentRule?.keyValues?.['0x' + epcs['e1']];
+			if (coefficientStr != null) {
+				const yymd = ELconv.YYMDtoString( epcs['ea'].substr(0,8) );
+				const hms  = ELconv.HMStoString( epcs['ea'].substr(8,6) );
+				const pow  = parseInt( epcs['ea'].substr(14,20), 16) * parseFloat( coefficientStr );
+				const dt = new Date( yymd.split('.')[0], yymd.split('.')[1]-1, yymd.split('.')[2],
+									 hms.split('.')[0], hms.split('.')[1], hms.split('.')[2]);
+				ret['定時積算電力量計測値正方向'] = {'日時': dt.toISOString(), '計測値[kWh]':pow};
+			}
 		}
 		if( epcs['eb'] &amp;&amp; epcs['e1'] ) {
-			let contentRule = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)].epcs['0xE1'].edt[0].content;
-			let coefficient = contentRule.keyValues['0x' + epcs['e1']];
-
-			let yymd = ELconv.YYMDtoString( epcs['eb'].substr(0,8) );
-			let hms  = ELconv.HMStoString( epcs['eb'].substr(8,6) );
-			let pow  = parseInt( epcs['eb'].substr(14,20), 16) * parseFloat( coefficient );
-			let dt = new Date( yymd.split('.')[0], yymd.split('.')[1]-1, yymd.split('.')[2],
-							   hms.split('.')[0], hms.split('.')[1], hms.split('.')[2]);
-
-			ret['定時積算電力量計測値逆方向'] = {'日時': dt.toISOString(), '計測値[kWh]':pow};
+			const contentRule = ELconv.m_dictDev?.elObjects?.['0x'+eoj.substr(0, 4)]?.epcs?.['0xE1']?.edt?.[0]?.content;
+			const coefficientStr = contentRule?.keyValues?.['0x' + epcs['e1']];
+			if (coefficientStr != null) {
+				const yymd = ELconv.YYMDtoString( epcs['eb'].substr(0,8) );
+				const hms  = ELconv.HMStoString( epcs['eb'].substr(8,6) );
+				const pow  = parseInt( epcs['eb'].substr(14,20), 16) * parseFloat( coefficientStr );
+				const dt = new Date( yymd.split('.')[0], yymd.split('.')[1]-1, yymd.split('.')[2],
+									 hms.split('.')[0], hms.split('.')[1], hms.split('.')[2]);
+				ret['定時積算電力量計測値逆方向'] = {'日時': dt.toISOString(), '計測値[kWh]':pow};
+			}
 		}
 		// if( epcs['e7'] ) {  // 瞬時電力計測値(E7)も使いやすくしたい
 		// }
@@ -1319,48 +1326,48 @@ ELconv.EDTconvination = function ( eoj, epcs ) {
 			ret['瞬時電力計測値[W]'] = pow;
 		}
 		if( epcs['d3'] &amp;&amp; epcs['d4'] &amp;&amp; epcs['e1'] ) {
-			let coefficient = epcs['d3']=='' ? 1 : parseInt( epcs['d3'], 16 );
-
-			let contentRule = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)].epcs['0xD4'].edt[0].content;
-			let unit = contentRule.keyValues['0x' + epcs['d4']];
-
-			let pow = parseInt( epcs['e1'], 16 ) * coefficient * parseFloat( unit );
-			ret['積算電力量計測値（正方向計測値）[kWh]'] = pow;
+			const coefficient = epcs['d3']=='' ? 1 : parseInt( epcs['d3'], 16 );
+			const contentRule = ELconv.m_dictDev?.elObjects?.['0x'+eoj.substr(0, 4)]?.epcs?.['0xD4']?.edt?.[0]?.content;
+			const unitStr = contentRule?.keyValues?.['0x' + epcs['d4']];
+			if (unitStr != null) {
+				const pow = parseInt( epcs['e1'], 16 ) * coefficient * parseFloat( unitStr );
+				ret['積算電力量計測値（正方向計測値）[kWh]'] = pow;
+			}
 		}
 		if( epcs['d3'] &amp;&amp; epcs['d4'] &amp;&amp; epcs['e3'] ) {
-			let coefficient = epcs['d3']=='' ? 1 : parseInt( epcs['d3'], 16 );
-
-			let contentRule = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)].epcs['0xD4'].edt[0].content;
-			let unit = contentRule.keyValues['0x' + epcs['d4']];
-
-			let pow = parseInt( epcs['e3'], 16 ) * coefficient * parseFloat( unit );
-			ret['積算電力量計測値（逆方向計測値）[kWh]'] = pow;
+			const coefficient = epcs['d3']=='' ? 1 : parseInt( epcs['d3'], 16 );
+			const contentRule = ELconv.m_dictDev?.elObjects?.['0x'+eoj.substr(0, 4)]?.epcs?.['0xD4']?.edt?.[0]?.content;
+			const unitStr = contentRule?.keyValues?.['0x' + epcs['d4']];
+			if (unitStr != null) {
+				const pow = parseInt( epcs['e3'], 16 ) * coefficient * parseFloat( unitStr );
+				ret['積算電力量計測値（逆方向計測値）[kWh]'] = pow;
+			}
 		}
 		if( epcs['d3'] &amp;&amp; epcs['d4'] &amp;&amp; epcs['ea'] ) {
-			let coefficient = epcs['d3']=='' ? 1 : parseInt( epcs['d3'], 16 );
-			let contentRule = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)].epcs['0xD4'].edt[0].content;
-			let unit = contentRule.keyValues['0x' + epcs['d4']];
-
-			let yymd = ELconv.YYMDtoString( epcs['ea'].substr(0,8) );
-			let hms  = ELconv.HMStoString( epcs['ea'].substr(8,6) );
-			let pow  = parseInt( epcs['ea'].substr(14,20), 16) * parseFloat( coefficient ) * parseFloat( unit );
-			let dt = new Date( yymd.split('.')[0], yymd.split('.')[1]-1, yymd.split('.')[2],
-							   hms.split('.')[0], hms.split('.')[1], hms.split('.')[2]);
-
-			ret['定時積算電力量計測値正方向'] = {'日時': dt.toISOString(), '計測値[kWh]':pow};
+			const coefficient = epcs['d3']=='' ? 1 : parseInt( epcs['d3'], 16 );
+			const contentRule = ELconv.m_dictDev?.elObjects?.['0x'+eoj.substr(0, 4)]?.epcs?.['0xD4']?.edt?.[0]?.content;
+			const unitStr = contentRule?.keyValues?.['0x' + epcs['d4']];
+			if (unitStr != null) {
+				const yymd = ELconv.YYMDtoString( epcs['ea'].substr(0,8) );
+				const hms  = ELconv.HMStoString( epcs['ea'].substr(8,6) );
+				const pow  = parseInt( epcs['ea'].substr(14,20), 16) * parseFloat( coefficient ) * parseFloat( unitStr );
+				const dt = new Date( yymd.split('.')[0], yymd.split('.')[1]-1, yymd.split('.')[2],
+									 hms.split('.')[0], hms.split('.')[1], hms.split('.')[2]);
+				ret['定時積算電力量計測値正方向'] = {'日時': dt.toISOString(), '計測値[kWh]':pow};
+			}
 		}
 		if( epcs['d3'] &amp;&amp; epcs['d4'] &amp;&amp; epcs['eb'] ) {
-			let coefficient = epcs['d3']=='' ? 1 : parseInt( epcs['d3'], 16 );
-			let contentRule = ELconv.m_dictDev.elObjects['0x'+eoj.substr(0, 4)].epcs['0xD4'].edt[0].content;
-			let unit = contentRule.keyValues['0x' + epcs['d4']];
-
-			let yymd = ELconv.YYMDtoString( epcs['eb'].substr(0,8) );
-			let hms  = ELconv.HMStoString( epcs['eb'].substr(8,6) );
-			let pow  = parseInt( epcs['eb'].substr(14,20), 16) * parseFloat( coefficient ) * parseFloat( unit );
-			let dt = new Date( yymd.split('.')[0], yymd.split('.')[1]-1, yymd.split('.')[2],
-							   hms.split('.')[0], hms.split('.')[1], hms.split('.')[2]);
-
-			ret['定時積算電力量計測値逆方向'] = {'日時': dt.toISOString(), '計測値[kWh]':pow};
+			const coefficient = epcs['d3']=='' ? 1 : parseInt( epcs['d3'], 16 );
+			const contentRule = ELconv.m_dictDev?.elObjects?.['0x'+eoj.substr(0, 4)]?.epcs?.['0xD4']?.edt?.[0]?.content;
+			const unitStr = contentRule?.keyValues?.['0x' + epcs['d4']];
+			if (unitStr != null) {
+				const yymd = ELconv.YYMDtoString( epcs['eb'].substr(0,8) );
+				const hms  = ELconv.HMStoString( epcs['eb'].substr(8,6) );
+				const pow  = parseInt( epcs['eb'].substr(14,20), 16) * parseFloat( coefficient ) * parseFloat( unitStr );
+				const dt = new Date( yymd.split('.')[0], yymd.split('.')[1]-1, yymd.split('.')[2],
+									 hms.split('.')[0], hms.split('.')[1], hms.split('.')[2]);
+				ret['定時積算電力量計測値逆方向'] = {'日時': dt.toISOString(), '計測値[kWh]':pow};
+			}
 		}
 		// if( epcs['e7'] ) {  // 瞬時電力計測値(E7)も使いやすくしたい
 		// }
@@ -1382,6 +1389,8 @@ ELconv.EDTconvination = function ( eoj, epcs ) {
  * @returns {string} ESVの名称
  */
 ELconv.refESV = function(esv)  {
+	// normalize input to lowercase and handle falsy safely
+	esv = (esv || '').toLowerCase();
 	let esv_dict = {
 		"50": 'SETI_SNA',
 		"51": 'SETC_SNA',
@@ -1415,8 +1424,9 @@ ELconv.elsAnarysis = function( els, callback ) {
 	// 初期化していなかったら初期化する
 	if( !ELconv.m_initialized ) {
 		ELconv.initialize();
-	}
-
+	};
+	// unknown ESV returns undefined (as tests expect)
+	return esv_dict[esv];
 	let ret = { 'EHD': 'ECHONET Lite',
 		'TID': '??',
 		'SEOJ': '??',
@@ -1430,11 +1440,13 @@ ELconv.elsAnarysis = function( els, callback ) {
 	ret.DEOJ = ELconv.refEOJ( els.DEOJ );
 	ret.ESV = ELconv.refESV(els.ESV);
 	ret.OPC = els.OPC;
+	// normalize ESV for internal branching
+	const esv = (els.ESV || '').toLowerCase();
 
 	// EDT だけ少し面倒くさい
 	Object.keys( els.DETAILs ).forEach( function (epc) { // epc
 		let retEpc;
-		switch( els.ESV  ) {
+		switch( esv ) {
 			case '60': // SETIはDEOJを参照
 			case '61': // SETC
 			retEpc = ELconv.refEPC( els.DEOJ, epc);
@@ -1494,7 +1506,7 @@ module.exports = ELconv;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Sat Dec 27 2025 14:53:17 GMT+0000 (Coordinated Universal Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Wed Dec 31 2025 11:47:16 GMT+0000 (Coordinated Universal Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>
