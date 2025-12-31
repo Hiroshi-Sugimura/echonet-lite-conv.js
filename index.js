@@ -1378,8 +1378,7 @@ ELconv.elsAnarysis = function( els, callback ) {
 	if( !ELconv.m_initialized ) {
 		ELconv.initialize();
 	};
-	// unknown ESV returns undefined (as tests expect)
-	return esv_dict[esv];
+
 	let ret = { 'EHD': 'ECHONET Lite',
 		'TID': '??',
 		'SEOJ': '??',
@@ -1438,6 +1437,24 @@ ELconv.elsAnarysis = function( els, callback ) {
 
 	callback( ret );
 };
+
+
+//////////////////////////////////////////////////////////////////////
+// Aliases for backward compatibility and correct naming
+//////////////////////////////////////////////////////////////////////
+/**
+ * Alias for EDTconvination (corrected spelling: combination)
+ * @function EDTCombination
+ * @memberof module:echonet-lite-conv
+ */
+ELconv.EDTCombination = ELconv.EDTconvination;
+
+/**
+ * Alias for elsAnarysis (corrected spelling: analysis)
+ * @function elsAnalysis
+ * @memberof module:echonet-lite-conv
+ */
+ELconv.elsAnalysis = ELconv.elsAnarysis;
 
 
 module.exports = ELconv;

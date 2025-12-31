@@ -217,4 +217,76 @@ describe('Integration tests for complex functions', () => {
       expect(result).to.include('J');
     });
   });
+
+  describe('API Aliases (backward compatibility and correct naming)', () => {
+    describe('EDTCombination (alias for EDTconvination)', () => {
+      it('EDTCombination works with 0288', () => {
+        const result = ELconv.EDTCombination('028801', {
+          'e0': '00000064',
+          'e1': '01'
+        });
+        expect(result).to.have.property('積算電力量計測値（正方向計測値）[kWh]');
+        expect(result['積算電力量計測値（正方向計測値）[kWh]']).to.equal(10);
+      });
+
+      it('EDTCombination works with 028D', () => {
+        const result = ELconv.EDTCombination('028D01', {
+          'd3': '000A',
+          'e7': '000003E8'
+        });
+        expect(result).to.have.property('瞬時電力計測値[W]');
+        expect(result['瞬時電力計測値[W]']).to.equal(10000);
+      });
+    });
+
+    describe('elsAnalysis (alias for elsAnarysis)', () => {
+      before(() => {
+        // Mock minimal dictionaries for elsAnalysis test
+        ELconv.m_dictDev = {
+          elObjects: {
+            '0x0288': {
+              objectName: '低圧スマート電力量メータ',
+              epcs: {}
+            }
+          }
+        };
+        ELconv.m_dictSup = { elObjects: { '0x0000': { epcs: {} } } };
+        ELconv.m_dictNod = { elObjects: { '0x0EF0': { epcs: {} } } };
+        ELconv.m_initialized = true;  // skip file loading in initialize()
+      });
+
+      it('elsAnalysis parses ELS with lowercase ESV', (done) => {
+        const els = {
+          TID: '0001',
+          SEOJ: '05FF01',
+          DEOJ: '028801',
+          ESV: '62',  // lowercase ESV
+          OPC: 0,
+          DETAILs: {}
+        };
+        ELconv.elsAnalysis(els, (result) => {
+          expect(result).to.have.property('ESV');
+          expect(result).to.have.property('TID');
+          done();
+        });
+      });
+
+      it('elsAnalysis parses ELS with uppercase ESV', (done) => {
+        const els = {
+          TID: '0002',
+          SEOJ: '05FF01',
+          DEOJ: '028801',
+          ESV: '62',  // uppercase should also work due to normalization
+          OPC: 0,
+          DETAILs: {}
+        };
+        ELconv.elsAnalysis(els, (result) => {
+          expect(result).to.have.property('ESV');
+          expect(result).to.have.property('TID');
+          expect(result.TID).to.equal('0002');
+          done();
+        });
+      });
+    });
+  });
 });
