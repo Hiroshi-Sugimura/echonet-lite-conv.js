@@ -1,4 +1,10 @@
-# Overview，概要
+# echonet-lite-conv.js
+
+[![npm version](https://badge.fury.io/js/echonet-lite-conv.svg)](https://badge.fury.io/js/echonet-lite-conv)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Test Status](https://img.shields.io/badge/tests-154%20passing-brightgreen)](https://github.com/hiroshi-sugimura/echonet-lite-conv.js)
+
+## Overview，概要
 
 このモジュールは**ECHONET Liteプロトコルのコンバーター**として機能します．
 基本的に，[echonet-lite.js](https://www.npmjs.com/package/echonet-lite)とセットで利用することを想定していますが単体でも利用できます．
@@ -6,10 +12,40 @@
 This module provides **converter for ECHONET Lite protocol**.
 The module to process ECHONET Lite protocol is [here](https://www.npmjs.com/package/echonet-lite).
 
+## 主な機能 / Key Features
 
-## Manual
+- ✅ **プロトコル変換**: ECHONET LiteのバイナリデータとJSON形式の相互変換
+- ✅ **辞書サポート**: ECHONET Lite Release G/H/I、Spec 1.11/1.12対応
+- ✅ **機器対応**: スマート電力量メータ、分電盤メータリング、家電機器など
+- ✅ **EDT解析**: 各種データタイプ（数値、文字列、日時、ビットマップなど）に対応
+- ✅ **エンコーディング**: ASCII、Shift_JIS文字列のサポート
+- ✅ **TypeScript型定義**: JSDocによる完全な型ヒント
+- ✅ **高信頼性**: 154のテストケースで品質保証
 
-http://hiroshi-sugimura.github.io/echonet-lite-conv.js/
+
+## Documentation / ドキュメント
+
+📖 **APIマニュアル**: http://hiroshi-sugimura.github.io/echonet-lite-conv.js/
+
+JSDocで自動生成されたAPIマニュアルがGitHub Pagesで公開されています。
+
+API documentation is automatically generated with JSDoc and published on GitHub Pages.
+
+### ドキュメント生成について / About Documentation Generation
+
+このプロジェクトはGitHub Actionsを使用してAPIドキュメントを自動生成しています。
+
+- **トリガー**: `main`ブランチへのプッシュ時
+- **ツール**: JSDoc 3.10+ with Docdash theme
+- **出力先**: `docs/` フォルダ（GitHub Pages対応）
+- **閲覧**: https://hiroshi-sugimura.github.io/echonet-lite-conv.js/
+
+ローカルでドキュメントを生成する場合:
+
+```bash
+npm install --save-dev jsdoc docdash
+npx jsdoc -c jsdoc.json
+```
 
 
 ## Install，インストール
@@ -192,38 +228,206 @@ console.dir( devs );
 
 ## API
 
+### 初期化 / Initialization
 
-* First, you must initialize this converter.
 コンバータを初期化しておく（JSON形式の定義データを読む）
 
-```
+First, you must initialize this converter.
+
+```javascript
+const ELconv = require('echonet-lite-conv');
+
+// 初期化（辞書データを読み込む）
 ELconv.initialize();
 ```
 
+### 主要API / Main APIs
 
-* You can use this converter as following.
-こんな感じでテキスト参照に変換できる
+#### 1. `refer(facilities, callback)` - データ参照変換
 
-```
-ELconv.refer( facilities, function( devs ) {
-	console.dir(devs);
+facilitiesデータを人間が読みやすい形式に変換します。
+
+Convert facilities data to human-readable format.
+
+```javascript
+ELconv.refer(facilities, function(devs) {
+    console.dir(devs);  // 変換結果
 });
 ```
 
+#### 2. `EDTconvination(eoj, epc_array)` - EDT組み合わせ
+
+**注意**: 正しい名前は `EDTCombination` です（後方互換のため両方使用可能）
+
+Note: Correct name is `EDTCombination` (both available for backward compatibility)
+
+```javascript
+// 新しい名前（推奨）
+const edt = ELconv.EDTCombination('0x0288', ['0xE0', '0xE1']);
+
+// 古い名前（非推奨だが互換性のため使用可能）
+const edt = ELconv.EDTconvination('0x0288', ['0xE0', '0xE1']);
+```
+
+#### 3. `elsAnarysis(els, callback)` - ELS構造解析
+
+**注意**: 正しい名前は `elsAnalysis` です（後方互換のため両方使用可能）
+
+Note: Correct name is `elsAnalysis` (both available for backward compatibility)
+
+```javascript
+const els = {
+    TID: '0001',
+    SEOJ: '05FF01',
+    DEOJ: '028801',
+    ESV: '62',
+    OPC: 1,
+    DETAILs: { '0xE0': Buffer.from([0x00, 0x00, 0x00, 0x01]) }
+};
+
+// 新しい名前（推奨）
+ELconv.elsAnalysis(els, function(result) {
+    console.log(result);
+});
+
+// 古い名前（非推奨だが互換性のため使用可能）
+ELconv.elsAnarysis(els, function(result) {
+    console.log(result);
+});
+```
+
+#### 4. `parseEDT(eoj, epc, edt)` - EDT解析
+
+EDT（ECHONET Data）を解析して意味のあるデータに変換します。
+
+Parse EDT (ECHONET Data) to meaningful values.
+
+```javascript
+const result = ELconv.parseEDT('0x0288', '0xE0', Buffer.from([0x00, 0x00, 0x00, 0x01]));
+console.log(result);  // { val: 1, unit: 'kWh', ... }
+```
+
+#### 5. `refEOJ(eoj)` - EOJ参照
+
+EOJ（ECHONET Object）を機器名に変換します。
+
+Convert EOJ to device name.
+
+```javascript
+const name = ELconv.refEOJ('0x028801');
+console.log(name);  // '低圧スマート電力量メータ01(028801)'
+```
+
+#### 6. `refEPC(eoj, epc)` - EPC参照
+
+EPC（ECHONET Property）をプロパティ名に変換します。
+
+Convert EPC to property name.
+
+```javascript
+const propName = ELconv.refEPC('0x0288', '0xE0');
+console.log(propName);  // '積算電力量計測値(正方向計測値)(E0)'
+```
+
+#### 7. `refESV(esv)` - ESV参照
+
+ESV（ECHONET Service）をサービス名に変換します（大文字小文字の違いを自動的に吸収）。
+
+Convert ESV to service name (automatically handles case differences).
+
+```javascript
+const serviceName = ELconv.refESV('62');  // '62'でも'6E'でも同じ
+console.log(serviceName);  // 'Get_Res(62)'
+```
+
+### ユーティリティAPI / Utility APIs
+
+#### データ変換関数 / Data Conversion Functions
+
+```javascript
+// 16進数文字列変換
+ELconv.toHexString(buffer);  // Buffer → '0A1B2C'
+
+// 16進数配列変換
+ELconv.toHexArray('0A1B2C');  // '0A1B2C' → [0x0A, 0x1B, 0x2C]
+
+// 日時フォーマット
+ELconv.YYMD([0x07, 0xE9, 0x0C, 0x1F]);  // → '2025/12/31'
+ELconv.HMS([0x17, 0x3B, 0x3B]);  // → '23:59:59'
+
+// ASCII文字列変換
+ELconv.parseASCII(buffer);
+
+// Shift_JIS文字列変換
+ELconv.parseShiftJIS(buffer);
+```
 
 
-## ECHONET Lite Converter 攻略情報
+
+## ECHONET Lite Converter 攻略情報 / Usage Tips
 
 Demosを見ればだいたいわかると思う．EDTにアクセスするには例えば，
 
-For using this module, data accesing sample is following.
+For using this module, data accessing sample is following.
 
+```javascript
+const ip  = devs.IPs[3];              // '192.168.2.159'
+const eoj = devs[ip].EOJs[1];         // 'Node profile01'
+const epc = devs[ip][eoj].EPCs[0];    // 'Operation status'
+const edt = devs[ip][eoj][epc];       // '30'
+console.log(edt);
 ```
-ip  = devs.IPs[3];                // '192.168.2.159'
-eoj = devs[ip].EOJs[1];           // 'Node profile01'
-epc = devs[ip][eoj].EPCs[0];      // 'Operation status'
-edt = devs[ip][eoj][epc];         // '30'
-console.log( edt );
+
+### よくあるユースケース / Common Use Cases
+
+#### 1. スマート電力量メータの積算電力量を取得
+
+```javascript
+ELconv.initialize();
+
+const facilities = {
+    '192.168.1.100': {
+        '028801': {
+            'E0': Buffer.from([0x00, 0x00, 0x12, 0x34])  // 0x1234 = 4660 (0.1kWh単位)
+        }
+    }
+};
+
+ELconv.refer(facilities, (devs) => {
+    const ip = devs.IPs[0];
+    const meter = devs[ip]['低圧スマート電力量メータ01(028801)'];
+    console.log(meter['積算電力量計測値(正方向計測値)(E0)']);
+    // 出力例: '4660 [0.1kWh] (00001234)'
+});
+```
+
+#### 2. 複数プロパティの一括取得
+
+```javascript
+const edt = ELconv.EDTCombination('0x0288', ['0xE0', 'E1', 'E3']);
+console.log(edt);
+// 積算電力量(正方向/逆方向)と瞬時電力の組み合わせEDTを取得
+```
+
+#### 3. 受信データの解析
+
+```javascript
+const receivedELS = {
+    TID: '0001',
+    SEOJ: '028801',  // スマートメータ
+    DEOJ: '05FF01',  // コントローラ
+    ESV: '72',       // Get_Res
+    OPC: 1,
+    DETAILs: {
+        'E7': Buffer.from([0x00, 0x00, 0x03, 0xE8])  // 瞬時電力 1000W
+    }
+};
+
+ELconv.elsAnalysis(receivedELS, (result) => {
+    console.log(result.ESV);   // 'Get_Res(72)'
+    console.log(result.SEOJ);  // '低圧スマート電力量メータ01(028801)'
+    console.log(result.EDT);   // 解析済みのプロパティ値
+});
 ```
 
 
@@ -316,6 +520,7 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 
 ## Log
 
+- 1.9.0 APIエイリアス追加（EDTCombination, elsAnalysis）、ESV正規化対応（大文字小文字自動変換）、辞書アクセス安全化（optional chaining）、JSDoc完全対応、GitHub Actionsでドキュメント自動生成、テスト154件（+4件）
 - 1.8.1 バグ修正、小数点対策
 - 1.8.0 小数点対策
 - 1.7.0 スマート電力量サブメータ、瞬時電力計測値
@@ -358,6 +563,67 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 - 0.0.1 枠組み公開した．
 
 
+## トラブルシューティング / Troubleshooting
+
+### よくある問題と解決方法 / Common Issues and Solutions
+
+#### 1. `m_dictDev is not defined` エラー
+
+**原因**: `initialize()`を呼ぶ前にAPIを使用している
+
+**解決策**:
+```javascript
+const ELconv = require('echonet-lite-conv');
+ELconv.initialize();  // 必ず最初に実行
+// その後でAPIを使用
+```
+
+#### 2. ESVが認識されない
+
+**原因**: 以前は大文字小文字を区別していました
+
+**解決策**: v1.8以降は自動的に正規化されるため、`'62'`でも`'6E'`でも動作します
+
+#### 3. EDTが解析されない
+
+**原因**: 対応していないデータタイプまたはEOJ/EPCの組み合わせ
+
+**解決策**: `parseEDT`の戻り値の`contentType`を確認してください
+```javascript
+const result = ELconv.parseEDT(eoj, epc, edt);
+if (result.contentType === 'referSpec') {
+    console.log('未対応のデータタイプです:', result);
+}
+```
+
+#### 4. テストが失敗する（ローカル開発時）
+
+**原因**: 辞書ファイルのパスが正しくない
+
+**解決策**:
+```bash
+# プロジェクトルートから実行
+npm test
+
+# パスを確認
+ls -la Spec_1.12/
+```
+
+### APIエイリアスについて / About API Aliases
+
+以下の関数は名前が間違っていましたが、後方互換性のため両方使えます：
+
+The following functions had incorrect names, but both are available for backward compatibility:
+
+| 古い名前（非推奨） / Old (deprecated) | 新しい名前（推奨） / New (recommended) |
+|-----------------------------------|-------------------------------------|
+| `EDTconvination`                  | `EDTCombination`                    |
+| `elsAnarysis`                     | `elsAnalysis`                       |
+
+**推奨**: 新しいコードでは正しい名前（`EDTCombination`, `elsAnalysis`）を使用してください。
+
+**Recommendation**: Use the correct names (`EDTCombination`, `elsAnalysis`) in new code.
+
 ## Known Issues（既知の問題）
 
 * 本当はRelease versionをみて，対応したバージョンの辞書を参考にしないといけないが，いまは最新データベースしか見に行っていない．たとえば古いEL機器は製造番号8DがASCIIでなくて0が入っていたりする。
@@ -366,3 +632,32 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 * 設置場所17バイト方式の，緯度経度高さ方式の16バイトの割り当てが不明．
 * RepeatCount非対応
 * データタイプothersはオブジェクト別対応のため，非対応
+
+## Contributing / 貢献
+
+プルリクエストやissueを歓迎します！
+
+Pull requests and issues are welcome!
+
+### 開発環境のセットアップ / Development Setup
+
+```bash
+git clone https://github.com/hiroshi-sugimura/echonet-lite-conv.js.git
+cd echonet-lite-conv.js
+npm install
+npm test  # 154テストが通ることを確認
+```
+
+### テストの追加方法 / How to Add Tests
+
+1. `unitTest/` フォルダに `*.spec.js` ファイルを作成
+2. Mocha + Chai を使用してテストを記述
+3. `npm test` で確認
+
+詳細は [Unit Test セクション](#unit-test--単体テスト) を参照してください。
+
+## License / ライセンス
+
+MIT License
+
+Copyright (c) Hiroshi Sugimura, Kanagawa Institute of Technology
