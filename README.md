@@ -520,6 +520,7 @@ SonyCSL/ECHONETLite-ObjectDatabase: Owada : Devices and properties database for 
 
 ## Log
 
+- 1.9.1 Signed Integerの可変長ビット対応（16bit/32bit等の符号付き整数変換を修正）
 - 1.9.0 APIエイリアス追加（EDTCombination, elsAnalysis）、ESV正規化対応（大文字小文字自動変換）、辞書アクセス安全化（optional chaining）、JSDoc完全対応、GitHub Actionsでドキュメント自動生成、テスト154件（+4件）
 - 1.8.1 バグ修正、小数点対策
 - 1.8.0 小数点対策
