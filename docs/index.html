@@ -60,13 +60,41 @@
 
 
     <section class="readme usertext">
-        <article><h1>Overview，概要</h1>
+        <article><h1>echonet-lite-conv.js</h1>
+<p><a href="https://badge.fury.io/js/echonet-lite-conv"><img src="https://badge.fury.io/js/echonet-lite-conv.svg" alt="npm version"></a>
+<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+<a href="https://github.com/hiroshi-sugimura/echonet-lite-conv.js"><img src="https://img.shields.io/badge/tests-154%20passing-brightgreen" alt="Test Status"></a></p>
+<h2>Overview，概要</h2>
 <p>このモジュールは<strong>ECHONET Liteプロトコルのコンバーター</strong>として機能します．
 基本的に，<a href="https://www.npmjs.com/package/echonet-lite">echonet-lite.js</a>とセットで利用することを想定していますが単体でも利用できます．</p>
 <p>This module provides <strong>converter for ECHONET Lite protocol</strong>.
 The module to process ECHONET Lite protocol is <a href="https://www.npmjs.com/package/echonet-lite">here</a>.</p>
-<h2>Manual</h2>
-<p>http://hiroshi-sugimura.github.io/echonet-lite-conv.js/</p>
+<h2>主な機能 / Key Features</h2>
+<ul>
+<li>✅ <strong>プロトコル変換</strong>: ECHONET LiteのバイナリデータとJSON形式の相互変換</li>
+<li>✅ <strong>辞書サポート</strong>: ECHONET Lite Release G/H/I、Spec 1.11/1.12対応</li>
+<li>✅ <strong>機器対応</strong>: スマート電力量メータ、分電盤メータリング、家電機器など</li>
+<li>✅ <strong>EDT解析</strong>: 各種データタイプ（数値、文字列、日時、ビットマップなど）に対応</li>
+<li>✅ <strong>エンコーディング</strong>: ASCII、Shift_JIS文字列のサポート</li>
+<li>✅ <strong>TypeScript型定義</strong>: JSDocによる完全な型ヒント</li>
+<li>✅ <strong>高信頼性</strong>: 154のテストケースで品質保証</li>
+</ul>
+<h2>Documentation / ドキュメント</h2>
+<p>📖 <strong>APIマニュアル</strong>: http://hiroshi-sugimura.github.io/echonet-lite-conv.js/</p>
+<p>JSDocで自動生成されたAPIマニュアルがGitHub Pagesで公開されています。</p>
+<p>API documentation is automatically generated with JSDoc and published on GitHub Pages.</p>
+<h3>ドキュメント生成について / About Documentation Generation</h3>
+<p>このプロジェクトはGitHub Actionsを使用してAPIドキュメントを自動生成しています。</p>
+<ul>
+<li><strong>トリガー</strong>: <code>main</code>ブランチへのプッシュ時</li>
+<li><strong>ツール</strong>: JSDoc 3.10+ with Docdash theme</li>
+<li><strong>出力先</strong>: <code>docs/</code> フォルダ（GitHub Pages対応）</li>
+<li><strong>閲覧</strong>: https://hiroshi-sugimura.github.io/echonet-lite-conv.js/</li>
+</ul>
+<p>ローカルでドキュメントを生成する場合:</p>
+<pre class="prettyprint source lang-bash"><code>npm install --save-dev jsdoc docdash
+npx jsdoc -c jsdoc.json
+</code></pre>
 <h2>Install，インストール</h2>
 <p>下記コマンドでインストールされます．</p>
 <p>Install this module.</p>
@@ -209,28 +237,145 @@ ELconv.refer( facilities, function( devs ) {
 </code></pre>
 <p><a href="https://www.npmjs.com/package/echonet-lite">Here</a> helps you to use this stracture and to communicate the ECHONET Lite protocol.</p>
 <h2>API</h2>
-<ul>
-<li>First, you must initialize this converter.
-コンバータを初期化しておく（JSON形式の定義データを読む）</li>
-</ul>
-<pre class="prettyprint source"><code>ELconv.initialize();
+<h3>初期化 / Initialization</h3>
+<p>コンバータを初期化しておく（JSON形式の定義データを読む）</p>
+<p>First, you must initialize this converter.</p>
+<pre class="prettyprint source lang-javascript"><code>const ELconv = require('echonet-lite-conv');
+
+// 初期化（辞書データを読み込む）
+ELconv.initialize();
 </code></pre>
-<ul>
-<li>You can use this converter as following.
-こんな感じでテキスト参照に変換できる</li>
-</ul>
-<pre class="prettyprint source"><code>ELconv.refer( facilities, function( devs ) {
-	console.dir(devs);
+<h3>主要API / Main APIs</h3>
+<h4>1. <code>refer(facilities, callback)</code> - データ参照変換</h4>
+<p>facilitiesデータを人間が読みやすい形式に変換します。</p>
+<p>Convert facilities data to human-readable format.</p>
+<pre class="prettyprint source lang-javascript"><code>ELconv.refer(facilities, function(devs) {
+    console.dir(devs);  // 変換結果
 });
 </code></pre>
-<h2>ECHONET Lite Converter 攻略情報</h2>
+<h4>2. <code>EDTconvination(eoj, epc_array)</code> - EDT組み合わせ</h4>
+<p><strong>注意</strong>: 正しい名前は <code>EDTCombination</code> です（後方互換のため両方使用可能）</p>
+<p>Note: Correct name is <code>EDTCombination</code> (both available for backward compatibility)</p>
+<pre class="prettyprint source lang-javascript"><code>// 新しい名前（推奨）
+const edt = ELconv.EDTCombination('0x0288', ['0xE0', '0xE1']);
+
+// 古い名前（非推奨だが互換性のため使用可能）
+const edt = ELconv.EDTconvination('0x0288', ['0xE0', '0xE1']);
+</code></pre>
+<h4>3. <code>elsAnarysis(els, callback)</code> - ELS構造解析</h4>
+<p><strong>注意</strong>: 正しい名前は <code>elsAnalysis</code> です（後方互換のため両方使用可能）</p>
+<p>Note: Correct name is <code>elsAnalysis</code> (both available for backward compatibility)</p>
+<pre class="prettyprint source lang-javascript"><code>const els = {
+    TID: '0001',
+    SEOJ: '05FF01',
+    DEOJ: '028801',
+    ESV: '62',
+    OPC: 1,
+    DETAILs: { '0xE0': Buffer.from([0x00, 0x00, 0x00, 0x01]) }
+};
+
+// 新しい名前（推奨）
+ELconv.elsAnalysis(els, function(result) {
+    console.log(result);
+});
+
+// 古い名前（非推奨だが互換性のため使用可能）
+ELconv.elsAnarysis(els, function(result) {
+    console.log(result);
+});
+</code></pre>
+<h4>4. <code>parseEDT(eoj, epc, edt)</code> - EDT解析</h4>
+<p>EDT（ECHONET Data）を解析して意味のあるデータに変換します。</p>
+<p>Parse EDT (ECHONET Data) to meaningful values.</p>
+<pre class="prettyprint source lang-javascript"><code>const result = ELconv.parseEDT('0x0288', '0xE0', Buffer.from([0x00, 0x00, 0x00, 0x01]));
+console.log(result);  // { val: 1, unit: 'kWh', ... }
+</code></pre>
+<h4>5. <code>refEOJ(eoj)</code> - EOJ参照</h4>
+<p>EOJ（ECHONET Object）を機器名に変換します。</p>
+<p>Convert EOJ to device name.</p>
+<pre class="prettyprint source lang-javascript"><code>const name = ELconv.refEOJ('0x028801');
+console.log(name);  // '低圧スマート電力量メータ01(028801)'
+</code></pre>
+<h4>6. <code>refEPC(eoj, epc)</code> - EPC参照</h4>
+<p>EPC（ECHONET Property）をプロパティ名に変換します。</p>
+<p>Convert EPC to property name.</p>
+<pre class="prettyprint source lang-javascript"><code>const propName = ELconv.refEPC('0x0288', '0xE0');
+console.log(propName);  // '積算電力量計測値(正方向計測値)(E0)'
+</code></pre>
+<h4>7. <code>refESV(esv)</code> - ESV参照</h4>
+<p>ESV（ECHONET Service）をサービス名に変換します（大文字小文字の違いを自動的に吸収）。</p>
+<p>Convert ESV to service name (automatically handles case differences).</p>
+<pre class="prettyprint source lang-javascript"><code>const serviceName = ELconv.refESV('62');  // '62'でも'6E'でも同じ
+console.log(serviceName);  // 'Get_Res(62)'
+</code></pre>
+<h3>ユーティリティAPI / Utility APIs</h3>
+<h4>データ変換関数 / Data Conversion Functions</h4>
+<pre class="prettyprint source lang-javascript"><code>// 16進数文字列変換
+ELconv.toHexString(buffer);  // Buffer → '0A1B2C'
+
+// 16進数配列変換
+ELconv.toHexArray('0A1B2C');  // '0A1B2C' → [0x0A, 0x1B, 0x2C]
+
+// 日時フォーマット
+ELconv.YYMD([0x07, 0xE9, 0x0C, 0x1F]);  // → '2025/12/31'
+ELconv.HMS([0x17, 0x3B, 0x3B]);  // → '23:59:59'
+
+// ASCII文字列変換
+ELconv.parseASCII(buffer);
+
+// Shift_JIS文字列変換
+ELconv.parseShiftJIS(buffer);
+</code></pre>
+<h2>ECHONET Lite Converter 攻略情報 / Usage Tips</h2>
 <p>Demosを見ればだいたいわかると思う．EDTにアクセスするには例えば，</p>
-<p>For using this module, data accesing sample is following.</p>
-<pre class="prettyprint source"><code>ip  = devs.IPs[3];                // '192.168.2.159'
-eoj = devs[ip].EOJs[1];           // 'Node profile01'
-epc = devs[ip][eoj].EPCs[0];      // 'Operation status'
-edt = devs[ip][eoj][epc];         // '30'
-console.log( edt );
+<p>For using this module, data accessing sample is following.</p>
+<pre class="prettyprint source lang-javascript"><code>const ip  = devs.IPs[3];              // '192.168.2.159'
+const eoj = devs[ip].EOJs[1];         // 'Node profile01'
+const epc = devs[ip][eoj].EPCs[0];    // 'Operation status'
+const edt = devs[ip][eoj][epc];       // '30'
+console.log(edt);
+</code></pre>
+<h3>よくあるユースケース / Common Use Cases</h3>
+<h4>1. スマート電力量メータの積算電力量を取得</h4>
+<pre class="prettyprint source lang-javascript"><code>ELconv.initialize();
+
+const facilities = {
+    '192.168.1.100': {
+        '028801': {
+            'E0': Buffer.from([0x00, 0x00, 0x12, 0x34])  // 0x1234 = 4660 (0.1kWh単位)
+        }
+    }
+};
+
+ELconv.refer(facilities, (devs) => {
+    const ip = devs.IPs[0];
+    const meter = devs[ip]['低圧スマート電力量メータ01(028801)'];
+    console.log(meter['積算電力量計測値(正方向計測値)(E0)']);
+    // 出力例: '4660 [0.1kWh] (00001234)'
+});
+</code></pre>
+<h4>2. 複数プロパティの一括取得</h4>
+<pre class="prettyprint source lang-javascript"><code>const edt = ELconv.EDTCombination('0x0288', ['0xE0', 'E1', 'E3']);
+console.log(edt);
+// 積算電力量(正方向/逆方向)と瞬時電力の組み合わせEDTを取得
+</code></pre>
+<h4>3. 受信データの解析</h4>
+<pre class="prettyprint source lang-javascript"><code>const receivedELS = {
+    TID: '0001',
+    SEOJ: '028801',  // スマートメータ
+    DEOJ: '05FF01',  // コントローラ
+    ESV: '72',       // Get_Res
+    OPC: 1,
+    DETAILs: {
+        'E7': Buffer.from([0x00, 0x00, 0x03, 0xE8])  // 瞬時電力 1000W
+    }
+};
+
+ELconv.elsAnalysis(receivedELS, (result) => {
+    console.log(result.ESV);   // 'Get_Res(72)'
+    console.log(result.SEOJ);  // '低圧スマート電力量メータ01(028801)'
+    console.log(result.EDT);   // 解析済みのプロパティ値
+});
 </code></pre>
 <h2>Memo</h2>
 <p>下記ファイルが辞書になっている．</p>
@@ -299,6 +444,8 @@ console.log( edt );
 <a href="https://github.com/SonyCSL/ECHONETLite-ObjectDatabase">https://github.com/SonyCSL/ECHONETLite-ObjectDatabase</a></p>
 <h2>Log</h2>
 <ul>
+<li>1.9.1 Signed Integerの可変長ビット対応（16bit/32bit等の符号付き整数変換を修正）</li>
+<li>1.9.0 APIエイリアス追加（EDTCombination, elsAnalysis）、ESV正規化対応（大文字小文字自動変換）、辞書アクセス安全化（optional chaining）、JSDoc完全対応、GitHub Actionsでドキュメント自動生成、テスト154件（+4件）</li>
 <li>1.8.1 バグ修正、小数点対策</li>
 <li>1.8.0 小数点対策</li>
 <li>1.7.0 スマート電力量サブメータ、瞬時電力計測値</li>
@@ -340,6 +487,58 @@ console.log( edt );
 <li>0.0.2 README.mdをそこそこきれいにした．攻略情報と辞書ファイルのことも追記した．</li>
 <li>0.0.1 枠組み公開した．</li>
 </ul>
+<h2>トラブルシューティング / Troubleshooting</h2>
+<h3>よくある問題と解決方法 / Common Issues and Solutions</h3>
+<h4>1. <code>m_dictDev is not defined</code> エラー</h4>
+<p><strong>原因</strong>: <code>initialize()</code>を呼ぶ前にAPIを使用している</p>
+<p><strong>解決策</strong>:</p>
+<pre class="prettyprint source lang-javascript"><code>const ELconv = require('echonet-lite-conv');
+ELconv.initialize();  // 必ず最初に実行
+// その後でAPIを使用
+</code></pre>
+<h4>2. ESVが認識されない</h4>
+<p><strong>原因</strong>: 以前は大文字小文字を区別していました</p>
+<p><strong>解決策</strong>: v1.8以降は自動的に正規化されるため、<code>'62'</code>でも<code>'6E'</code>でも動作します</p>
+<h4>3. EDTが解析されない</h4>
+<p><strong>原因</strong>: 対応していないデータタイプまたはEOJ/EPCの組み合わせ</p>
+<p><strong>解決策</strong>: <code>parseEDT</code>の戻り値の<code>contentType</code>を確認してください</p>
+<pre class="prettyprint source lang-javascript"><code>const result = ELconv.parseEDT(eoj, epc, edt);
+if (result.contentType === 'referSpec') {
+    console.log('未対応のデータタイプです:', result);
+}
+</code></pre>
+<h4>4. テストが失敗する（ローカル開発時）</h4>
+<p><strong>原因</strong>: 辞書ファイルのパスが正しくない</p>
+<p><strong>解決策</strong>:</p>
+<pre class="prettyprint source lang-bash"><code># プロジェクトルートから実行
+npm test
+
+# パスを確認
+ls -la Spec_1.12/
+</code></pre>
+<h3>APIエイリアスについて / About API Aliases</h3>
+<p>以下の関数は名前が間違っていましたが、後方互換性のため両方使えます：</p>
+<p>The following functions had incorrect names, but both are available for backward compatibility:</p>
+<table>
+<thead>
+<tr>
+<th>古い名前（非推奨） / Old (deprecated)</th>
+<th>新しい名前（推奨） / New (recommended)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EDTconvination</code></td>
+<td><code>EDTCombination</code></td>
+</tr>
+<tr>
+<td><code>elsAnarysis</code></td>
+<td><code>elsAnalysis</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>推奨</strong>: 新しいコードでは正しい名前（<code>EDTCombination</code>, <code>elsAnalysis</code>）を使用してください。</p>
+<p><strong>Recommendation</strong>: Use the correct names (<code>EDTCombination</code>, <code>elsAnalysis</code>) in new code.</p>
 <h2>Known Issues（既知の問題）</h2>
 <ul>
 <li>本当はRelease versionをみて，対応したバージョンの辞書を参考にしないといけないが，いまは最新データベースしか見に行っていない．たとえば古いEL機器は製造番号8DがASCIIでなくて0が入っていたりする。</li>
@@ -348,7 +547,26 @@ console.log( edt );
 <li>設置場所17バイト方式の，緯度経度高さ方式の16バイトの割り当てが不明．</li>
 <li>RepeatCount非対応</li>
 <li>データタイプothersはオブジェクト別対応のため，非対応</li>
-</ul></article>
+</ul>
+<h2>Contributing / 貢献</h2>
+<p>プルリクエストやissueを歓迎します！</p>
+<p>Pull requests and issues are welcome!</p>
+<h3>開発環境のセットアップ / Development Setup</h3>
+<pre class="prettyprint source lang-bash"><code>git clone https://github.com/hiroshi-sugimura/echonet-lite-conv.js.git
+cd echonet-lite-conv.js
+npm install
+npm test  # 154テストが通ることを確認
+</code></pre>
+<h3>テストの追加方法 / How to Add Tests</h3>
+<ol>
+<li><code>unitTest/</code> フォルダに <code>*.spec.js</code> ファイルを作成</li>
+<li>Mocha + Chai を使用してテストを記述</li>
+<li><code>npm test</code> で確認</li>
+</ol>
+<p>詳細は <a href="#unit-test--%E5%8D%98%E4%BD%93%E3%83%86%E3%82%B9%E3%83%88">Unit Test セクション</a> を参照してください。</p>
+<h2>License / ライセンス</h2>
+<p>MIT License</p>
+<p>Copyright (c) Hiroshi Sugimura, Kanagawa Institute of Technology</p></article>
     </section>
 
 
@@ -363,7 +581,7 @@ console.log( edt );
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Wed Dec 31 2025 11:58:04 GMT+0000 (Coordinated Universal Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Fri Jan 09 2026 12:36:30 GMT+0000 (Coordinated Universal Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>
